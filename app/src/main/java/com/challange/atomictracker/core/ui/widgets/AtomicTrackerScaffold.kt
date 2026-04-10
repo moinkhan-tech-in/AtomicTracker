@@ -1,4 +1,4 @@
-package com.challange.atomictracker.core.ui.components
+package com.challange.atomictracker.core.ui.widgets
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope

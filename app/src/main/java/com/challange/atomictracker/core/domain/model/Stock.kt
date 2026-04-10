@@ -10,4 +10,10 @@ data class Stock(
 
     val isNegative: Boolean
         get() = change < 0
+
+    fun priceDirection(): PriceDirection = when {
+        isPositive -> PriceDirection.Up
+        isNegative -> PriceDirection.Down
+        else -> PriceDirection.Neutral
+    }
 }

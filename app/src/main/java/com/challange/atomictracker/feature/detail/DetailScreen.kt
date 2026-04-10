@@ -6,8 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.challange.atomictracker.core.ui.components.AtomicTrackerAppBar
-import com.challange.atomictracker.core.ui.components.AtomicTrackerScaffold
+import com.challange.atomictracker.core.ui.widgets.AtomicTrackerAppBar
+import com.challange.atomictracker.core.ui.widgets.AtomicTrackerScaffold
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
