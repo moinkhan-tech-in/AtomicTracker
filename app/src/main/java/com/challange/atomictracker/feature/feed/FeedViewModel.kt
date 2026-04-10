@@ -2,6 +2,7 @@ package com.challange.atomictracker.feature.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.challange.atomictracker.core.data.StockRepository
 import com.challange.atomictracker.core.domain.usecase.GetFeedStocksFlowUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     getFeedStocks: GetFeedStocksFlowUseCase,
+    stockRepository: StockRepository
 ) : ViewModel() {
+
+    val isFeedConnected: StateFlow<Boolean> = stockRepository.isFeedConnected
 
     val uiState: StateFlow<FeedUiState> = getFeedStocks()
         .map { stocks -> FeedUiState.Success(stocks) as FeedUiState }

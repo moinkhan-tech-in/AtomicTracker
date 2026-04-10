@@ -1,6 +1,7 @@
-package com.challange.atomictracker.core.ui.widgets
+package com.challange.atomictracker.core.designsystem.widgets
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -11,6 +12,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,36 +24,17 @@ fun AtomicTrackerAppBar(
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
-    AtomicTrackerAppBar(
+    TopAppBar(
         title = {
             Text(
+                modifier = Modifier.padding(12.dp),
                 text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
             )
         },
-        modifier = modifier,
-        navigationIcon = navigationIcon,
-        actions = actions,
-        colors = colors,
-        scrollBehavior = scrollBehavior,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AtomicTrackerAppBar(
-    title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-) {
-    TopAppBar(
-        title = title,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 12.dp),
         navigationIcon = navigationIcon,
         actions = actions,
         colors = colors,

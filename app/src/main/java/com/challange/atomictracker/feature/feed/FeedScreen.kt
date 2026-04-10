@@ -5,89 +5,161 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.challange.atomictracker.core.designsystem.components.FeedConnectionIndicator
+import com.challange.atomictracker.core.designsystem.components.StockQuoteGridItem
+import com.challange.atomictracker.core.designsystem.components.StockQuoteListItem
+import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
+import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerCircularLoader
+import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerErrorMessage
+import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffold
 import com.challange.atomictracker.core.domain.model.Stock
-import com.challange.atomictracker.core.ui.widgets.AtomicTrackerCircularLoader
-import com.challange.atomictracker.core.ui.widgets.AtomicTrackerErrorMessage
-import com.challange.atomictracker.core.ui.widgets.AtomicTrackerScaffold
-import com.challange.atomictracker.core.ui.components.StockQuoteGridItem
-import com.challange.atomictracker.core.ui.theme.AtomicTrackerTheme
 import kotlinx.collections.immutable.persistentListOf
-import java.text.NumberFormat
-import java.util.Locale
 
-private val GridMinCellWidth = 120.dp
+private val GridMinCellWidth = 100.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel(),
     onOpenDetail: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val isFeedConnected by viewModel.isFeedConnected.collectAsStateWithLifecycle()
     FeedScreenContent(
         uiState = uiState,
+        isFeedConnected = isFeedConnected,
         onOpenDetail = onOpenDetail,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreenContent(
     uiState: FeedUiState,
-    onOpenDetail: (String) -> Unit,
+    isFeedConnected: Boolean,
+    onOpenDetail: (String) -> Unit
 ) {
-    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
+    var isListView by remember { mutableStateOf(true) }
+    var connectionIndicator by remember { mutableStateOf(isFeedConnected) }
 
-    AtomicTrackerScaffold(title = "Stocks") { innerPadding ->
+    val feedGridState = rememberLazyStaggeredGridState()
+    val gridColumns = remember(isListView) {
+        when {
+            isListView -> StaggeredGridCells.Fixed(1)
+            else -> StaggeredGridCells.Adaptive(GridMinCellWidth)
+        }
+    }
+
+    AtomicTrackerScaffold(
+        title = "Stocks",
+        navigationIcon = {
+            FeedConnectionIndicator(connectionIndicator)
+        },
+        actions = {
+            IconButton(onClick = { isListView = !isListView }) {
+                Icon(
+                    imageVector = if (isListView) Icons.Default.GridView else Icons.AutoMirrored.Filled.ViewList,
+                    contentDescription = if (isListView) "Grid view" else "List view"
+                )
+            }
+            IconButton(onClick = { connectionIndicator = !connectionIndicator }) {
+                Icon(
+                    imageVector = if (connectionIndicator) Icons.Default.PlayCircle else Icons.Default.PauseCircle,
+                    contentDescription = if (connectionIndicator) "Connected" else "Disconnected"
+                )
+            }
+        }
+    ) { innerPadding ->
         Crossfade(uiState) { state ->
             when (state) {
-            FeedUiState.Loading -> {
-                AtomicTrackerCircularLoader(innerPadding)
-            }
+                FeedUiState.Loading -> {
+                    AtomicTrackerCircularLoader(innerPadding)
+                }
 
-            is FeedUiState.Error -> {
-                AtomicTrackerErrorMessage(state.message)
-            }
+                is FeedUiState.Error -> {
+                    AtomicTrackerErrorMessage(state.message, padding = innerPadding)
+                }
 
-            is FeedUiState.Empty -> {
-                AtomicTrackerErrorMessage("No stocks to show")
-            }
+                is FeedUiState.Empty -> {
+                    AtomicTrackerErrorMessage("No stocks to show", padding = innerPadding)
+                }
 
-            is FeedUiState.Success  -> {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = GridMinCellWidth),
-                    modifier = Modifier.fillMaxSize().padding(innerPadding),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    items(items = state.stocks, key = { it.symbol }) { stock ->
-                        val priceText = remember(stock.price) {
-                            currencyFormat.format(stock.price)
-                        }
-                        StockQuoteGridItem(
-                            symbol = stock.symbol,
-                            priceText = priceText,
-                            direction = stock.priceDirection(),
-                            onClick = { onOpenDetail(stock.symbol) },
-                        )
-                    }
+                is FeedUiState.Success -> {
+                    FeedSuccessContent(
+                        state = state,
+                        isListView = isListView,
+                        gridColumns = gridColumns,
+                        feedGridState = feedGridState,
+                        onOpenDetail = onOpenDetail,
+                        innerPadding = innerPadding
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FeedSuccessContent(
+    state: FeedUiState.Success,
+    isListView: Boolean,
+    gridColumns: StaggeredGridCells,
+    feedGridState: LazyStaggeredGridState,
+    onOpenDetail: (String) -> Unit,
+    innerPadding: PaddingValues
+) {
+    LazyVerticalStaggeredGrid(
+        columns = gridColumns,
+        state = feedGridState,
+        modifier = Modifier.fillMaxSize().padding(innerPadding),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalItemSpacing = 12.dp
+    ) {
+        if (isListView) {
+            items(items = state.stocks, key = { it.symbol }) { stock ->
+                StockQuoteListItem(
+                    symbol = stock.symbol,
+                    price = stock.price,
+                    change = stock.change,
+                    direction = stock.priceDirection(),
+                    onClick = { onOpenDetail(stock.symbol) },
+                )
+            }
+        } else {
+            items(items = state.stocks, key = { it.symbol }) { stock ->
+                StockQuoteGridItem(
+                    symbol = stock.symbol,
+                    price = stock.price,
+                    change = stock.change,
+                    direction = stock.priceDirection(),
+                    onClick = { onOpenDetail(stock.symbol) },
+                )
+            }
         }
     }
 }
@@ -104,6 +176,7 @@ private fun FeedScreenSuccessPreview() {
                     Stock("TSLA", 172.10, -3.4),
                 ),
             ),
+            isFeedConnected = true,
             onOpenDetail = {},
         )
     }
@@ -121,6 +194,7 @@ private fun FeedScreenSuccessDarkPreview() {
                     Stock("TSLA", 172.10, -3.4),
                 ),
             ),
+            isFeedConnected = true,
             onOpenDetail = {},
         )
     }
@@ -133,6 +207,7 @@ private fun FeedScreenLoadingPreview() {
     AtomicTrackerTheme {
         FeedScreenContent(
             uiState = FeedUiState.Loading,
+            isFeedConnected = false,
             onOpenDetail = {},
         )
     }
@@ -145,6 +220,7 @@ private fun FeedScreenErrorPreview() {
     AtomicTrackerTheme {
         FeedScreenContent(
             uiState = FeedUiState.Error("Network unavailable"),
+            isFeedConnected = false,
             onOpenDetail = {},
         )
     }

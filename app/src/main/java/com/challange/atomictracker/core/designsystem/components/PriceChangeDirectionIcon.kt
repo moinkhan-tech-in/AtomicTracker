@@ -1,4 +1,4 @@
-package com.challange.atomictracker.core.ui.components
+package com.challange.atomictracker.core.designsystem.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import com.challange.atomictracker.core.domain.model.PriceDirection
-import com.challange.atomictracker.core.ui.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
 
 @Composable
 fun PriceChangeDirectionIcon(

@@ -1,5 +1,6 @@
 package com.challange.atomictracker.core.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -18,7 +19,7 @@ fun AtomicTrackerNavHost(
     NavHost(
         navController = navController,
         startDestination = FeedRoute,
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
     ) {
         composable<FeedRoute> {
             FeedScreen(

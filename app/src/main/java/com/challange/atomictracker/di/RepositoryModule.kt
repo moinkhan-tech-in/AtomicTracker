@@ -1,7 +1,7 @@
 package com.challange.atomictracker.di
 
-import com.challange.atomictracker.core.data.FakeStockListRepository
-import com.challange.atomictracker.core.data.StockListRepository
+import com.challange.atomictracker.core.data.DefaultStockRepository
+import com.challange.atomictracker.core.data.StockRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindStockListRepository(impl: FakeStockListRepository): StockListRepository
+    abstract fun bindStockListRepository(impl: DefaultStockRepository): StockRepository
 }

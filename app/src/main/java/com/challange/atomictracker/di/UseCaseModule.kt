@@ -1,6 +1,6 @@
 package com.challange.atomictracker.di
 
-import com.challange.atomictracker.core.data.StockListRepository
+import com.challange.atomictracker.core.data.StockRepository
 import com.challange.atomictracker.core.domain.usecase.GetFeedStocksFlowUseCase
 import dagger.Module
 import dagger.Provides
@@ -15,6 +15,6 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideGetFeedStocksFlowUseCase(
-        repository: StockListRepository,
+        repository: StockRepository,
     ): GetFeedStocksFlowUseCase = GetFeedStocksFlowUseCase(repository)
 }

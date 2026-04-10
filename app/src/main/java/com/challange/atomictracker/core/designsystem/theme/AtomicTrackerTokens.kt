@@ -1,4 +1,4 @@
-package com.challange.atomictracker.core.ui.theme
+package com.challange.atomictracker.core.designsystem.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Immutable

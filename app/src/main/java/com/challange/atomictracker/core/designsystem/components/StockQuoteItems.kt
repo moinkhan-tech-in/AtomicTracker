@@ -1,13 +1,5 @@
-package com.challange.atomictracker.core.ui.components
+package com.challange.atomictracker.core.designsystem.components
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,37 +12,38 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.TrendingFlat
-import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.domain.model.PriceDirection
-import com.challange.atomictracker.core.ui.theme.AtomicTrackerTheme
-import com.challange.atomictracker.core.ui.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
+import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
 import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
 fun StockQuoteListItem(
     symbol: String,
-    priceText: String,
+    price: Double,
+    change: Double,
     direction: PriceDirection,
-    modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    val cardModifier = modifier
+    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
+    val tokens = LocalAtomicTrackerTokens.current
+    val changeColor = when (direction) {
+        PriceDirection.Up -> tokens.pricePositive
+        PriceDirection.Down -> tokens.priceNegative
+        PriceDirection.Neutral -> tokens.priceNeutral
+    }
+    val cardModifier = Modifier
         .fillMaxWidth()
         .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
 
@@ -71,20 +64,34 @@ fun StockQuoteListItem(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Column(
+                horizontalAlignment = Alignment.End,
             ) {
+                val priceText = remember(price) { currencyFormat.format(price) }
                 Text(
                     text = priceText,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                PriceChangeDirectionIcon(
-                    direction = direction,
-                    modifier = Modifier.size(24.dp),
-                    contentDescription = null,
-                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    val changeText = remember(change) {
+                        String.format(Locale.US, "%+.2f", change)
+                    }
+                    Text(
+                        text = changeText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = changeColor,
+                    )
+                    PriceChangeDirectionIcon(
+                        direction = direction,
+                        modifier = Modifier.size(20.dp),
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }
@@ -93,11 +100,19 @@ fun StockQuoteListItem(
 @Composable
 fun StockQuoteGridItem(
     symbol: String,
-    priceText: String,
+    price: Double,
+    change: Double,
     direction: PriceDirection,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
+    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
+    val tokens = LocalAtomicTrackerTokens.current
+    val changeColor = when (direction) {
+        PriceDirection.Up -> tokens.pricePositive
+        PriceDirection.Down -> tokens.priceNegative
+        PriceDirection.Neutral -> tokens.priceNeutral
+    }
     val cardModifier = modifier
         .width(200.dp)
         .aspectRatio(1f)
@@ -119,18 +134,28 @@ fun StockQuoteGridItem(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(8.dp))
+            val priceText = remember(price) { currencyFormat.format(price) }
+            Text(
+                text = priceText,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
+                val changeText = remember(change) {
+                    String.format(Locale.US, "%+.2f", change)
+                }
                 Text(
-                    text = priceText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    text = changeText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = changeColor,
                 )
                 PriceChangeDirectionIcon(
                     direction = direction,
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier.size(20.dp),
                     contentDescription = null,
                 )
             }
@@ -144,9 +169,9 @@ private fun StockQuoteListItemPreview() {
     AtomicTrackerTheme {
         StockQuoteListItem(
             symbol = "AAPL",
-            priceText = NumberFormat.getCurrencyInstance(Locale.US).format(189.42),
+            price = 182.9,
+            change = 1.25,
             direction = PriceDirection.Up,
-            modifier = Modifier.padding(16.dp),
         )
     }
 }
@@ -157,7 +182,8 @@ private fun StockQuoteGridItemPreview() {
     AtomicTrackerTheme {
         StockQuoteGridItem(
             symbol = "NVDA",
-            priceText = NumberFormat.getCurrencyInstance(Locale.US).format(892.0),
+            price = 143.9,
+            change = -2.15,
             direction = PriceDirection.Down,
             modifier = Modifier.padding(16.dp),
         )

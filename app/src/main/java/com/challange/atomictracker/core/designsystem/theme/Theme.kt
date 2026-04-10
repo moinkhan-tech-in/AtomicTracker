@@ -1,4 +1,4 @@
-package com.challange.atomictracker.core.ui.theme
+package com.challange.atomictracker.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -53,7 +53,7 @@ fun AtomicTrackerTheme(
     val tokens = atomicTrackerTokensFrom(colorScheme)
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = MaterialTheme.typography,
     ) {
         CompositionLocalProvider(LocalAtomicTrackerTokens provides tokens) {
             content()
