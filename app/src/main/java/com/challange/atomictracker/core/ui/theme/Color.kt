@@ -1,4 +1,4 @@
-package com.challange.atomictracker.ui.theme
+package com.challange.atomictracker.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
