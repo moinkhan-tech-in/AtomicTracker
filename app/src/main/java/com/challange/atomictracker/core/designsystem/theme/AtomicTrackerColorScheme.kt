@@ -14,13 +14,13 @@ data class AtomicTrackerColorScheme(
 val LightAtomicTrackerColorScheme = AtomicTrackerColorScheme(
     positive = SemanticPositiveLight,
     negative = SemanticNegativeLight,
-    neutral = Color.Unspecified,
+    neutral = SemanticNeutralLight,
 )
 
 val DarkAtomicTrackerColorScheme = AtomicTrackerColorScheme(
     positive = SemanticPositiveDark,
     negative = SemanticNegativeDark,
-    neutral = Color.Unspecified
+    neutral = SemanticNeutralDark,
 )
 
 val LocalAtomicTrackerColorScheme = staticCompositionLocalOf<AtomicTrackerColorScheme> {

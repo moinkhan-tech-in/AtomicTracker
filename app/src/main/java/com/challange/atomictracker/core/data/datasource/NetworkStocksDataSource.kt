@@ -105,11 +105,16 @@ class NetworkStocksDataSource @Inject constructor(
         while (currentCoroutineContext().isActive &&
             _liveFeedConnectionState.value != LiveFeedConnectionState.Disconnected
         ) {
+            val previousBySymbol = _stocks.value.associateBy { it.symbol }
             val batch = HARDCODED_STOCKS.map { stock ->
+                val previousPrice = previousBySymbol[stock.symbol]?.price ?: stock.price
+                val rawPrice = previousPrice + Random.nextDouble(-TICK_DELTA_MAX, TICK_DELTA_MAX)
+                val newPrice = rawPrice.coerceIn(MIN_QUOTE_PRICE, MAX_QUOTE_PRICE)
+                val appliedChange = newPrice - previousPrice
                 StockDto(
                     symbol = stock.symbol,
-                    price = Random.nextDouble(20.0, 2000.0),
-                    change = Random.nextDouble(-25.0, 25.0),
+                    price = newPrice,
+                    change = appliedChange,
                     companyName = stock.companyName,
                 )
             }
@@ -126,5 +131,8 @@ class NetworkStocksDataSource @Inject constructor(
     private companion object {
         const val TICK_CYCLE_DELAY_MS = 2_000L
         const val ECHO_TIMEOUT_MS = 15_000L
+        const val TICK_DELTA_MAX = 25.0
+        const val MIN_QUOTE_PRICE = 1.0
+        const val MAX_QUOTE_PRICE = 10_000.0
     }
 }

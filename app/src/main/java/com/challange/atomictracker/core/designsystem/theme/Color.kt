@@ -20,6 +20,9 @@ val SemanticPositiveDark = Color(0xFF69F0AE)
 val SemanticNegativeLight = Color(0xFFB71C1C)
 val SemanticNegativeDark = Color(0xFFFF8A80)
 
+val SemanticNeutralLight = Color(0xFF546E7A)
+val SemanticNeutralDark = Color(0xFFB0BEC5)
+
 val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,

@@ -1,5 +1,7 @@
 package com.challange.atomictracker.core.designsystem.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,24 +13,62 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.challange.atomictracker.core.domain.model.PriceDirection
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
+import com.challange.atomictracker.core.domain.model.PriceDirection
 import java.text.NumberFormat
 import java.util.Locale
+
+private const val PriceFlashDurationMs = 2000
+
+@Composable
+private fun QuoteFlashPriceText(
+    price: Double,
+    change: Double,
+    flashColor: Color,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Unspecified,
+) {
+    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
+    val priceText = remember(price) { currencyFormat.format(price) }
+    val baseColor = MaterialTheme.colorScheme.onSurface
+    val progress = remember { Animatable(1f) }
+
+    LaunchedEffect(price, change) {
+        if (change == 0.0) {
+            progress.snapTo(1f)
+            return@LaunchedEffect
+        }
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(durationMillis = PriceFlashDurationMs))
+    }
+
+    val priceColor = lerp(flashColor, baseColor, progress.value)
+    Text(
+        text = priceText,
+        modifier = modifier,
+        style = style,
+        color = priceColor,
+        textAlign = textAlign,
+    )
+}
 
 @Composable
 fun StockQuoteListItem(
@@ -39,7 +79,6 @@ fun StockQuoteListItem(
     direction: PriceDirection,
     onClick: (() -> Unit)? = null,
 ) {
-    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
         PriceDirection.Up -> tokens.positive
@@ -80,11 +119,11 @@ fun StockQuoteListItem(
             Column(
                 horizontalAlignment = Alignment.End,
             ) {
-                val priceText = remember(price) { currencyFormat.format(price) }
-                Text(
-                    text = priceText,
+                QuoteFlashPriceText(
+                    price = price,
+                    change = change,
+                    flashColor = changeColor,
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(
@@ -120,7 +159,6 @@ fun StockQuoteGridItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
         PriceDirection.Up -> tokens.positive
@@ -128,7 +166,7 @@ fun StockQuoteGridItem(
         PriceDirection.Neutral -> tokens.neutral
     }
     val cardModifier = modifier
-        .width(200.dp)
+        .fillMaxWidth()
         .aspectRatio(1f)
         .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
 
@@ -160,12 +198,12 @@ fun StockQuoteGridItem(
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(6.dp))
-            val priceText = remember(price) { currencyFormat.format(price) }
-            Text(
-                text = priceText,
-                modifier = Modifier.fillMaxWidth(),
+            QuoteFlashPriceText(
+                price = price,
+                change = change,
+                flashColor = changeColor,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(4.dp))
