@@ -23,13 +23,13 @@ fun AtomicTrackerNavHost(
     ) {
         composable<FeedRoute> {
             FeedScreen(
-                onOpenDetail = { id -> navController.navigate(DetailRoute(id = id)) },
+                onOpenDetail = { symbol -> navController.navigate(DetailRoute(symbol = symbol)) },
             )
         }
         composable<DetailRoute> { backStackEntry ->
             val route = backStackEntry.toRoute<DetailRoute>()
             DetailScreen(
-                id = route.id,
+                symbol = route.symbol,
                 onBack = { navController.popBackStack() },
             )
         }

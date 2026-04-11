@@ -8,4 +8,4 @@ import kotlinx.serialization.Serializable
 data object FeedRoute
 
 @Serializable
-data class DetailRoute(val id: String)
+data class DetailRoute(val symbol: String)
