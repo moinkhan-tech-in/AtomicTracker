@@ -38,6 +38,8 @@ import com.challange.atomictracker.core.designsystem.components.FeedConnectionIn
 import com.challange.atomictracker.core.designsystem.components.StockQuoteGridItem
 import com.challange.atomictracker.core.designsystem.components.StockQuoteListItem
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
+import com.challange.atomictracker.core.designsystem.theme.ThemeMode
+import com.challange.atomictracker.core.designsystem.theme.ThemePickerMenuButton
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerCircularLoader
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerErrorMessage
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffold
@@ -51,7 +53,9 @@ private val GridMinCellWidth = 100.dp
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel(),
-    onOpenDetail: (String) -> Unit
+    onOpenDetail: (String) -> Unit,
+    themeMode: ThemeMode = ThemeMode.FollowSystem,
+    onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val liveFeedConnectionState by viewModel.liveFeedConnectionState.collectAsStateWithLifecycle()
@@ -60,6 +64,8 @@ fun FeedScreen(
         liveFeedConnectionState = liveFeedConnectionState,
         onSetLiveFeedEnabled = viewModel::setLiveFeedEnabled,
         onOpenDetail = onOpenDetail,
+        themeMode = themeMode,
+        onThemeModeChange = onThemeModeChange
     )
 }
 
@@ -69,7 +75,9 @@ fun FeedScreenContent(
     uiState: FeedUiState,
     liveFeedConnectionState: LiveFeedConnectionState,
     onSetLiveFeedEnabled: (Boolean) -> Unit,
-    onOpenDetail: (String) -> Unit
+    onOpenDetail: (String) -> Unit,
+    themeMode: ThemeMode = ThemeMode.FollowSystem,
+    onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
     var isListView by rememberSaveable { mutableStateOf(true) }
     val feedGridState = rememberLazyStaggeredGridState()
@@ -84,6 +92,10 @@ fun FeedScreenContent(
         title = "Stocks",
         navigationIcon = { FeedConnectionIndicator(liveFeedConnectionState) },
         actions = {
+            ThemePickerMenuButton(
+                themeMode = themeMode,
+                onThemeModeChange = onThemeModeChange
+            )
             IconButton(onClick = { isListView = !isListView }) {
                 Icon(
                     imageVector = if (isListView) Icons.Default.GridView else Icons.AutoMirrored.Filled.ViewList,
@@ -97,30 +109,28 @@ fun FeedScreenContent(
             )
         }
     ) { innerPadding ->
-        Crossfade(uiState) { state ->
-            when (state) {
-                FeedUiState.Loading -> {
-                    AtomicTrackerCircularLoader(innerPadding)
-                }
+        when (uiState) {
+            FeedUiState.Loading -> {
+                AtomicTrackerCircularLoader(innerPadding)
+            }
 
-                is FeedUiState.Error -> {
-                    AtomicTrackerErrorMessage(state.message, padding = innerPadding)
-                }
+            is FeedUiState.Error -> {
+                AtomicTrackerErrorMessage(uiState.message, padding = innerPadding)
+            }
 
-                is FeedUiState.Empty -> {
-                    AtomicTrackerErrorMessage("No stocks to show", padding = innerPadding)
-                }
+            is FeedUiState.Empty -> {
+                AtomicTrackerErrorMessage("No stocks to show", padding = innerPadding)
+            }
 
-                is FeedUiState.Success -> {
-                    FeedSuccessContent(
-                        state = state,
-                        isListView = isListView,
-                        gridColumns = gridColumns,
-                        feedGridState = feedGridState,
-                        onOpenDetail = onOpenDetail,
-                        innerPadding = innerPadding
-                    )
-                }
+            is FeedUiState.Success -> {
+                FeedSuccessContent(
+                    state = uiState,
+                    isListView = isListView,
+                    gridColumns = gridColumns,
+                    feedGridState = feedGridState,
+                    onOpenDetail = onOpenDetail,
+                    innerPadding = innerPadding
+                )
             }
         }
     }
@@ -131,7 +141,7 @@ private fun ToggleFeedIcon(
     liveFeedConnectionState: LiveFeedConnectionState,
     onSetLiveFeedEnabled: (Boolean) -> Unit
 ) {
-    Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
         Crossfade(liveFeedConnectionState, modifier = Modifier.size(24.dp)) {
             when (it) {
                 LiveFeedConnectionState.Connecting -> {
@@ -225,7 +235,7 @@ private fun FeedScreenSuccessPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FeedScreenSuccessDarkPreview() {
-    AtomicTrackerTheme(darkTheme = true) {
+    AtomicTrackerTheme(themeMode = ThemeMode.Dark) {
         FeedScreenContent(
             uiState = FeedUiState.Success(
                 persistentListOf(

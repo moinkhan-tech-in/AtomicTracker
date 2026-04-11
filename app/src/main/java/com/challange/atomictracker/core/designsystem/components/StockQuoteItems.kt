@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.domain.model.PriceDirection
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
-import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -40,7 +40,7 @@ fun StockQuoteListItem(
     onClick: (() -> Unit)? = null,
 ) {
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
-    val tokens = LocalAtomicTrackerTokens.current
+    val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
         PriceDirection.Up -> tokens.positive
         PriceDirection.Down -> tokens.negative
@@ -121,7 +121,7 @@ fun StockQuoteGridItem(
     onClick: (() -> Unit)? = null,
 ) {
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
-    val tokens = LocalAtomicTrackerTokens.current
+    val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
         PriceDirection.Up -> tokens.positive
         PriceDirection.Down -> tokens.negative

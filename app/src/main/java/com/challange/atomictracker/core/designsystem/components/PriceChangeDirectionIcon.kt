@@ -17,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import com.challange.atomictracker.core.domain.model.PriceDirection
-import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
 
 @Composable
 fun PriceChangeDirectionIcon(
@@ -25,7 +25,7 @@ fun PriceChangeDirectionIcon(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
 ) {
-    val tokens = LocalAtomicTrackerTokens.current
+    val tokens = LocalAtomicTrackerColorScheme.current
 
     AnimatedContent(
         targetState = direction,

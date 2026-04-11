@@ -25,7 +25,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.challange.atomictracker.core.designsystem.components.PriceChangeDirectionIcon
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
-import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.designsystem.theme.ThemeMode
+import com.challange.atomictracker.core.designsystem.theme.ThemePickerMenuButton
+import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerCircularLoader
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerErrorMessage
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffold
@@ -40,12 +42,16 @@ fun DetailScreen(
     symbol: String,
     onBack: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel(),
+    themeMode: ThemeMode = ThemeMode.FollowSystem,
+    onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DetailScreenContent(
         symbol = symbol,
         uiState = uiState,
         onBack = onBack,
+        themeMode = themeMode,
+        onThemeModeChange = onThemeModeChange,
     )
 }
 
@@ -55,6 +61,8 @@ fun DetailScreenContent(
     symbol: String,
     uiState: DetailUiState,
     onBack: () -> Unit,
+    themeMode: ThemeMode = ThemeMode.FollowSystem,
+    onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
     val title = when (uiState) {
         is DetailUiState.Success -> uiState.stock.symbol
@@ -66,6 +74,12 @@ fun DetailScreenContent(
             TextButton(onClick = onBack) {
                 Text("Back")
             }
+        },
+        actions = {
+            ThemePickerMenuButton(
+                themeMode = themeMode,
+                onThemeModeChange = onThemeModeChange
+            )
         },
     ) { innerPadding ->
         Crossfade(uiState, label = "detailState") { state ->
@@ -98,7 +112,7 @@ private fun DetailQuoteBody(
     modifier: Modifier = Modifier,
 ) {
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
-    val tokens = LocalAtomicTrackerTokens.current
+    val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (stock.priceDirection()) {
         PriceDirection.Up -> tokens.positive
         PriceDirection.Down -> tokens.negative

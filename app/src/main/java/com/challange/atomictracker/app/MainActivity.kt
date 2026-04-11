@@ -4,8 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.challange.atomictracker.core.navigation.AtomicTrackerNavHost
-import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
+import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerRoot
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,9 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AtomicTrackerTheme {
-                AtomicTrackerNavHost()
-            }
+            AtomicTrackerRoot()
         }
     }
 }

@@ -8,11 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.challange.atomictracker.core.designsystem.theme.ThemeMode
 import com.challange.atomictracker.feature.detail.DetailScreen
 import com.challange.atomictracker.feature.feed.FeedScreen
 
 @Composable
 fun AtomicTrackerNavHost(
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
@@ -24,6 +27,8 @@ fun AtomicTrackerNavHost(
         composable<FeedRoute> {
             FeedScreen(
                 onOpenDetail = { symbol -> navController.navigate(DetailRoute(symbol = symbol)) },
+                themeMode = themeMode,
+                onThemeModeChange = onThemeModeChange
             )
         }
         composable<DetailRoute> { backStackEntry ->
@@ -31,6 +36,8 @@ fun AtomicTrackerNavHost(
             DetailScreen(
                 symbol = route.symbol,
                 onBack = { navController.popBackStack() },
+                themeMode = themeMode,
+                onThemeModeChange = onThemeModeChange
             )
         }
     }
