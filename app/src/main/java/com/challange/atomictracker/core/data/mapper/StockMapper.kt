@@ -11,6 +11,7 @@ class StockMapper @Inject constructor() {
             symbol = dto.symbol,
             price = dto.price,
             change = dto.change,
+            companyName = dto.companyName,
         )
 
     fun toDomain(dtos: List<StockDto>): List<Stock> = dtos.map { toDomain(it) }

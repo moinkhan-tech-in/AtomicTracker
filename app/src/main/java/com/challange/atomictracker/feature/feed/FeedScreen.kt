@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,7 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +41,7 @@ import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerCircularLoader
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerErrorMessage
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffold
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.collections.immutable.persistentListOf
 
@@ -48,10 +54,11 @@ fun FeedScreen(
     onOpenDetail: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isFeedConnected by viewModel.isFeedConnected.collectAsStateWithLifecycle()
+    val liveFeedConnectionState by viewModel.liveFeedConnectionState.collectAsStateWithLifecycle()
     FeedScreenContent(
         uiState = uiState,
-        isFeedConnected = isFeedConnected,
+        liveFeedConnectionState = liveFeedConnectionState,
+        onSetLiveFeedEnabled = viewModel::setLiveFeedEnabled,
         onOpenDetail = onOpenDetail,
     )
 }
@@ -60,12 +67,11 @@ fun FeedScreen(
 @Composable
 fun FeedScreenContent(
     uiState: FeedUiState,
-    isFeedConnected: Boolean,
+    liveFeedConnectionState: LiveFeedConnectionState,
+    onSetLiveFeedEnabled: (Boolean) -> Unit,
     onOpenDetail: (String) -> Unit
 ) {
-    var isListView by remember { mutableStateOf(true) }
-    var connectionIndicator by remember { mutableStateOf(isFeedConnected) }
-
+    var isListView by rememberSaveable { mutableStateOf(true) }
     val feedGridState = rememberLazyStaggeredGridState()
     val gridColumns = remember(isListView) {
         when {
@@ -76,9 +82,7 @@ fun FeedScreenContent(
 
     AtomicTrackerScaffold(
         title = "Stocks",
-        navigationIcon = {
-            FeedConnectionIndicator(connectionIndicator)
-        },
+        navigationIcon = { FeedConnectionIndicator(liveFeedConnectionState) },
         actions = {
             IconButton(onClick = { isListView = !isListView }) {
                 Icon(
@@ -86,12 +90,11 @@ fun FeedScreenContent(
                     contentDescription = if (isListView) "Grid view" else "List view"
                 )
             }
-            IconButton(onClick = { connectionIndicator = !connectionIndicator }) {
-                Icon(
-                    imageVector = if (connectionIndicator) Icons.Default.PlayCircle else Icons.Default.PauseCircle,
-                    contentDescription = if (connectionIndicator) "Connected" else "Disconnected"
-                )
-            }
+
+            ToggleFeedIcon(
+                liveFeedConnectionState = liveFeedConnectionState,
+                onSetLiveFeedEnabled = onSetLiveFeedEnabled
+            )
         }
     ) { innerPadding ->
         Crossfade(uiState) { state ->
@@ -124,6 +127,39 @@ fun FeedScreenContent(
 }
 
 @Composable
+private fun ToggleFeedIcon(
+    liveFeedConnectionState: LiveFeedConnectionState,
+    onSetLiveFeedEnabled: (Boolean) -> Unit
+) {
+    Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+        Crossfade(liveFeedConnectionState, modifier = Modifier.size(24.dp)) {
+            when (it) {
+                LiveFeedConnectionState.Connecting -> {
+                    CircularProgressIndicator(Modifier.size(24.dp))
+                }
+
+                else -> {
+                    IconButton(
+                        onClick = {
+                            when (liveFeedConnectionState) {
+                                LiveFeedConnectionState.Disconnected -> onSetLiveFeedEnabled(true)
+                                LiveFeedConnectionState.Connected -> onSetLiveFeedEnabled(false)
+                                LiveFeedConnectionState.Connecting -> {}
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = if (liveFeedConnectionState == LiveFeedConnectionState.Connected) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
+                            contentDescription = if (liveFeedConnectionState == LiveFeedConnectionState.Connected) "Pause live updates" else "Resume live updates"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun FeedSuccessContent(
     state: FeedUiState.Success,
     isListView: Boolean,
@@ -135,8 +171,8 @@ private fun FeedSuccessContent(
     LazyVerticalStaggeredGrid(
         columns = gridColumns,
         state = feedGridState,
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
-        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        contentPadding = innerPadding,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalItemSpacing = 12.dp
     ) {
@@ -144,6 +180,7 @@ private fun FeedSuccessContent(
             items(items = state.stocks, key = { it.symbol }) { stock ->
                 StockQuoteListItem(
                     symbol = stock.symbol,
+                    companyName = stock.companyName,
                     price = stock.price,
                     change = stock.change,
                     direction = stock.priceDirection(),
@@ -154,6 +191,7 @@ private fun FeedSuccessContent(
             items(items = state.stocks, key = { it.symbol }) { stock ->
                 StockQuoteGridItem(
                     symbol = stock.symbol,
+                    companyName = stock.companyName,
                     price = stock.price,
                     change = stock.change,
                     direction = stock.priceDirection(),
@@ -172,11 +210,12 @@ private fun FeedScreenSuccessPreview() {
         FeedScreenContent(
             uiState = FeedUiState.Success(
                 persistentListOf(
-                    Stock("AAPL", 189.42, 1.2),
-                    Stock("TSLA", 172.10, -3.4),
+                    Stock("AAPL", 189.42, 1.2, "Apple Inc."),
+                    Stock("TSLA", 172.10, -3.4, "Tesla, Inc."),
                 ),
             ),
-            isFeedConnected = true,
+            liveFeedConnectionState = LiveFeedConnectionState.Connected,
+            onSetLiveFeedEnabled = {},
             onOpenDetail = {},
         )
     }
@@ -190,11 +229,12 @@ private fun FeedScreenSuccessDarkPreview() {
         FeedScreenContent(
             uiState = FeedUiState.Success(
                 persistentListOf(
-                    Stock("AAPL", 189.42, 1.2),
-                    Stock("TSLA", 172.10, -3.4),
+                    Stock("AAPL", 189.42, 1.2, "Apple Inc."),
+                    Stock("TSLA", 172.10, -3.4, "Tesla, Inc."),
                 ),
             ),
-            isFeedConnected = true,
+            liveFeedConnectionState = LiveFeedConnectionState.Connected,
+            onSetLiveFeedEnabled = {},
             onOpenDetail = {},
         )
     }
@@ -207,7 +247,8 @@ private fun FeedScreenLoadingPreview() {
     AtomicTrackerTheme {
         FeedScreenContent(
             uiState = FeedUiState.Loading,
-            isFeedConnected = false,
+            liveFeedConnectionState = LiveFeedConnectionState.Connecting,
+            onSetLiveFeedEnabled = {},
             onOpenDetail = {},
         )
     }
@@ -220,7 +261,8 @@ private fun FeedScreenErrorPreview() {
     AtomicTrackerTheme {
         FeedScreenContent(
             uiState = FeedUiState.Error("Network unavailable"),
-            isFeedConnected = false,
+            liveFeedConnectionState = LiveFeedConnectionState.Disconnected,
+            onSetLiveFeedEnabled = {},
             onOpenDetail = {},
         )
     }

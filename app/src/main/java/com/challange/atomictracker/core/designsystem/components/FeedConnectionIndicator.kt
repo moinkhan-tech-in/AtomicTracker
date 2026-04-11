@@ -11,15 +11,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 
 @Composable
 fun FeedConnectionIndicator(
-    isConnected: Boolean
+    connectionState: LiveFeedConnectionState
 ) {
+    val tokens = LocalAtomicTrackerTokens.current
     val color by animateColorAsState(
-        when {
-            isConnected -> LocalAtomicTrackerTokens.current.pricePositive
-            else -> LocalAtomicTrackerTokens.current.priceNegative
+        when (connectionState) {
+            LiveFeedConnectionState.Connected -> tokens.positive
+            LiveFeedConnectionState.Connecting -> tokens.neutral
+            LiveFeedConnectionState.Disconnected -> tokens.negative
         }
     )
     Spacer(

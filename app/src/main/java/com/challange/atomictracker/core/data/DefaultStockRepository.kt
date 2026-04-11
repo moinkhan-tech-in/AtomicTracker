@@ -2,9 +2,9 @@ package com.challange.atomictracker.core.data
 
 import com.challange.atomictracker.core.data.datasource.StocksDataSource
 import com.challange.atomictracker.core.data.mapper.StockMapper
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,5 +21,10 @@ class DefaultStockRepository @Inject constructor(
     override fun observeStock(symbol: String): Flow<Stock> =
         stocksDataSource.observeStock(symbol).map { stockMapper.toDomain(it) }
 
-    override val isFeedConnected: StateFlow<Boolean> = stocksDataSource.isConnected
+    override val liveFeedConnectionState: Flow<LiveFeedConnectionState> =
+        stocksDataSource.liveFeedConnectionState
+
+    override fun setLiveFeedEnabled(enabled: Boolean) {
+        stocksDataSource.setLiveFeedEnabled(enabled)
+    }
 }

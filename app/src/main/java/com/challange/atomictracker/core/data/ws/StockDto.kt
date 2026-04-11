@@ -7,4 +7,5 @@ data class StockDto(
     val symbol: String,
     val price: Double,
     val change: Double,
+    val companyName: String = "",
 )

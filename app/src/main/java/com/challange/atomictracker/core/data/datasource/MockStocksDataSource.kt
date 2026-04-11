@@ -2,6 +2,7 @@ package com.challange.atomictracker.core.data.datasource
 
 import com.challange.atomictracker.core.data.ws.StockDto
 import com.challange.atomictracker.core.domain.model.HARDCODED_STOCKS
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +15,21 @@ import javax.inject.Singleton
 @Singleton
 class MockStocksDataSource @Inject constructor() : StocksDataSource {
 
-    private val _isConnected = MutableStateFlow(true)
-    override val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
+    private val _liveFeedConnectionState =
+        MutableStateFlow(LiveFeedConnectionState.Connected)
+
+    override val liveFeedConnectionState: StateFlow<LiveFeedConnectionState> =
+        _liveFeedConnectionState.asStateFlow()
+
+    override fun setLiveFeedEnabled(enabled: Boolean) {
+        val wantLive = _liveFeedConnectionState.value != LiveFeedConnectionState.Disconnected
+        if (wantLive == enabled) return
+        _liveFeedConnectionState.value = if (enabled) {
+            LiveFeedConnectionState.Connected
+        } else {
+            LiveFeedConnectionState.Disconnected
+        }
+    }
 
     override fun observeStocks(): Flow<List<StockDto>> = flow {
         emit(HARDCODED_STOCKS)

@@ -3,7 +3,8 @@ package com.challange.atomictracker.core.domain.model
 data class Stock(
     val symbol: String,
     val price: Double,
-    val change: Double
+    val change: Double,
+    val companyName: String,
 ) {
     val isPositive: Boolean
         get() = change > 0

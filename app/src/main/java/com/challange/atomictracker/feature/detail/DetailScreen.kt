@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -99,9 +100,9 @@ private fun DetailQuoteBody(
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val tokens = LocalAtomicTrackerTokens.current
     val changeColor = when (stock.priceDirection()) {
-        PriceDirection.Up -> tokens.pricePositive
-        PriceDirection.Down -> tokens.priceNegative
-        PriceDirection.Neutral -> tokens.priceNeutral
+        PriceDirection.Up -> tokens.positive
+        PriceDirection.Down -> tokens.negative
+        PriceDirection.Neutral -> tokens.neutral
     }
     val priceText = remember(stock.price) { currencyFormat.format(stock.price) }
     val changeText = remember(stock.change) {
@@ -112,6 +113,14 @@ private fun DetailQuoteBody(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
     ) {
+        Text(
+            text = stock.companyName,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Last price",
             style = MaterialTheme.typography.labelLarge,
@@ -155,7 +164,9 @@ private fun DetailScreenSuccessPreview() {
     AtomicTrackerTheme {
         DetailScreenContent(
             symbol = "AAPL",
-            uiState = DetailUiState.Success(Stock("AAPL", 189.42, 1.25)),
+            uiState = DetailUiState.Success(
+                Stock("AAPL", 189.42, 1.25, "Apple Inc."),
+            ),
             onBack = {},
         )
     }

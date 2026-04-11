@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.domain.model.PriceDirection
@@ -31,6 +33,7 @@ import java.util.Locale
 @Composable
 fun StockQuoteListItem(
     symbol: String,
+    companyName: String,
     price: Double,
     change: Double,
     direction: PriceDirection,
@@ -39,9 +42,9 @@ fun StockQuoteListItem(
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val tokens = LocalAtomicTrackerTokens.current
     val changeColor = when (direction) {
-        PriceDirection.Up -> tokens.pricePositive
-        PriceDirection.Down -> tokens.priceNegative
-        PriceDirection.Neutral -> tokens.priceNeutral
+        PriceDirection.Up -> tokens.positive
+        PriceDirection.Down -> tokens.negative
+        PriceDirection.Neutral -> tokens.neutral
     }
     val cardModifier = Modifier
         .fillMaxWidth()
@@ -59,11 +62,21 @@ fun StockQuoteListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = symbol,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Column(modifier = Modifier.weight(1f, fill = false)) {
+                Text(
+                    text = symbol,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = companyName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Column(
                 horizontalAlignment = Alignment.End,
             ) {
@@ -100,6 +113,7 @@ fun StockQuoteListItem(
 @Composable
 fun StockQuoteGridItem(
     symbol: String,
+    companyName: String,
     price: Double,
     change: Double,
     direction: PriceDirection,
@@ -109,9 +123,9 @@ fun StockQuoteGridItem(
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val tokens = LocalAtomicTrackerTokens.current
     val changeColor = when (direction) {
-        PriceDirection.Up -> tokens.pricePositive
-        PriceDirection.Down -> tokens.priceNegative
-        PriceDirection.Neutral -> tokens.priceNeutral
+        PriceDirection.Up -> tokens.positive
+        PriceDirection.Down -> tokens.negative
+        PriceDirection.Neutral -> tokens.neutral
     }
     val cardModifier = modifier
         .width(200.dp)
@@ -130,20 +144,35 @@ fun StockQuoteGridItem(
         ) {
             Text(
                 text = symbol,
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = companyName,
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
             val priceText = remember(price) { currencyFormat.format(price) }
             Text(
                 text = priceText,
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.Center,
             ) {
                 val changeText = remember(change) {
                     String.format(Locale.US, "%+.2f", change)
@@ -169,6 +198,7 @@ private fun StockQuoteListItemPreview() {
     AtomicTrackerTheme {
         StockQuoteListItem(
             symbol = "AAPL",
+            companyName = "Apple Inc.",
             price = 182.9,
             change = 1.25,
             direction = PriceDirection.Up,
@@ -182,6 +212,7 @@ private fun StockQuoteGridItemPreview() {
     AtomicTrackerTheme {
         StockQuoteGridItem(
             symbol = "NVDA",
+            companyName = "NVIDIA Corporation",
             price = 143.9,
             change = -2.15,
             direction = PriceDirection.Down,

@@ -2,8 +2,10 @@ package com.challange.atomictracker.feature.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.challange.atomictracker.core.data.StockRepository
 import com.challange.atomictracker.core.domain.usecase.GetFeedStocksFlowUseCase
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.core.domain.usecase.GetLiveFeedConnectionStateFlowUseCase
+import com.challange.atomictracker.core.domain.usecase.SetLiveFeedEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,13 +16,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    getFeedStocks: GetFeedStocksFlowUseCase,
-    stockRepository: StockRepository
+    getFeedStocksFlowUseCase: GetFeedStocksFlowUseCase,
+    liveFeedFlowUseCase: GetLiveFeedConnectionStateFlowUseCase,
+    private val setLiveFeedEnabledUseCase: SetLiveFeedEnabledUseCase,
 ) : ViewModel() {
 
-    val isFeedConnected: StateFlow<Boolean> = stockRepository.isFeedConnected
+    val liveFeedConnectionState: StateFlow<LiveFeedConnectionState> =
+        liveFeedFlowUseCase()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = LiveFeedConnectionState.Connecting,
+            )
 
-    val uiState: StateFlow<FeedUiState> = getFeedStocks()
+    val uiState: StateFlow<FeedUiState> = getFeedStocksFlowUseCase()
         .map { stocks -> FeedUiState.Success(stocks) as FeedUiState }
         .catch { throwable ->
             emit(
@@ -34,4 +43,6 @@ class FeedViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = FeedUiState.Loading
         )
+
+    fun setLiveFeedEnabled(enabled: Boolean) = setLiveFeedEnabledUseCase(enabled)
 }

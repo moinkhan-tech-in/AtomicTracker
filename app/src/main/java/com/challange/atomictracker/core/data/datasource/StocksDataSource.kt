@@ -1,8 +1,8 @@
 package com.challange.atomictracker.core.data.datasource
 
 import com.challange.atomictracker.core.data.ws.StockDto
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 interface StocksDataSource {
 
@@ -10,5 +10,7 @@ interface StocksDataSource {
 
     fun observeStock(symbol: String): Flow<StockDto>
 
-    val isConnected: StateFlow<Boolean>
+    val liveFeedConnectionState: Flow<LiveFeedConnectionState>
+
+    fun setLiveFeedEnabled(enabled: Boolean)
 }

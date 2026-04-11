@@ -50,7 +50,7 @@ fun AtomicTrackerTheme(
         else -> LightColorScheme
     }
 
-    val tokens = atomicTrackerTokensFrom(colorScheme)
+    val tokens = atomicTrackerTokensFrom(colorScheme, darkTheme)
     MaterialTheme(
         colorScheme = colorScheme,
         typography = MaterialTheme.typography,

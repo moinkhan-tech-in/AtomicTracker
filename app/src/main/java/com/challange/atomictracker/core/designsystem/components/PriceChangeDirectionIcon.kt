@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import com.challange.atomictracker.core.domain.model.PriceDirection
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerTokens
 
@@ -27,50 +26,51 @@ fun PriceChangeDirectionIcon(
     contentDescription: String? = null,
 ) {
     val tokens = LocalAtomicTrackerTokens.current
-    val density = LocalDensity.current
-
-    val isDirectional = direction != PriceDirection.Neutral
-    val targetRotation = when (direction) {
-        PriceDirection.Down -> 180f
-        else -> 0f
-    }
-    val rotationY by animateFloatAsState(
-        targetValue = if (isDirectional) targetRotation else 0f,
-        animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing)
-    )
-    val arrowTint by animateColorAsState(
-        targetValue = when (direction) {
-            PriceDirection.Down -> tokens.priceNegative
-            PriceDirection.Up -> tokens.pricePositive
-            PriceDirection.Neutral -> tokens.pricePositive
-        },
-        animationSpec = tween(220),
-        label = "directionTint",
-    )
 
     AnimatedContent(
-        targetState = isDirectional,
+        targetState = direction,
         transitionSpec = {
             fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(220))
-        }
-    ) { directional ->
-        if (!directional) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.TrendingFlat,
-                contentDescription = contentDescription,
-                tint = tokens.priceNeutral,
-                modifier = modifier,
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Rounded.ArrowUpward,
-                contentDescription = contentDescription,
-                tint = arrowTint,
-                modifier = modifier.graphicsLayer {
-                    this.rotationY = rotationY
-                    cameraDistance = 16f * density.density
-                },
-            )
+        },
+        label = "priceDirection",
+    ) { dir ->
+        when (dir) {
+            PriceDirection.Neutral -> {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.TrendingFlat,
+                    contentDescription = contentDescription,
+                    tint = tokens.neutral,
+                    modifier = modifier,
+                )
+            }
+
+            PriceDirection.Up -> {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowUpward,
+                    contentDescription = contentDescription,
+                    tint = tokens.positive,
+                    modifier = modifier,
+                )
+            }
+
+            PriceDirection.Down -> {
+                val flipRotation by animateFloatAsState(
+                    targetValue = 180f,
+                    animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
+                    label = "arrowDownRotation",
+                )
+                val tint by animateColorAsState(
+                    targetValue = tokens.negative,
+                    animationSpec = tween(220),
+                    label = "arrowDownTint",
+                )
+                Icon(
+                    imageVector = Icons.Rounded.ArrowUpward,
+                    contentDescription = contentDescription,
+                    tint = tint,
+                    modifier = modifier.graphicsLayer { rotationZ = flipRotation },
+                )
+            }
         }
     }
 }

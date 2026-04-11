@@ -7,16 +7,16 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class AtomicTrackerTokens(
-    val pricePositive: Color,
-    val priceNegative: Color,
-    val priceNeutral: Color,
+    val positive: Color,
+    val negative: Color,
+    val neutral: Color,
 )
 
-fun atomicTrackerTokensFrom(colorScheme: ColorScheme): AtomicTrackerTokens =
+fun atomicTrackerTokensFrom(colorScheme: ColorScheme, isDarkTheme: Boolean): AtomicTrackerTokens =
     AtomicTrackerTokens(
-        pricePositive = colorScheme.primary,
-        priceNegative = colorScheme.error,
-        priceNeutral = colorScheme.onSurfaceVariant,
+        positive = if (isDarkTheme) SemanticPositiveDark else SemanticPositiveLight,
+        negative = if (isDarkTheme) SemanticNegativeDark else SemanticNegativeLight,
+        neutral = colorScheme.onSurfaceVariant,
     )
 
 val LocalAtomicTrackerTokens = staticCompositionLocalOf<AtomicTrackerTokens> {
