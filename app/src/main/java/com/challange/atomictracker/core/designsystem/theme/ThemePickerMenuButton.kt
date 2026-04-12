@@ -19,7 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.challange.atomictracker.R
 
 @Composable
 fun ThemePickerMenuButton(
@@ -31,9 +33,9 @@ fun ThemePickerMenuButton(
     Box(modifier = modifier) {
         IconButton(onClick = { expanded = true }) {
             val (icon, description) = when (themeMode) {
-                ThemeMode.Light -> Icons.Outlined.LightMode to "Theme: light"
-                ThemeMode.Dark -> Icons.Outlined.DarkMode to "Theme: dark"
-                ThemeMode.FollowSystem -> Icons.Outlined.BrightnessAuto to "Theme: follow system"
+                ThemeMode.Light -> Icons.Outlined.LightMode to stringResource(R.string.cd_theme_light)
+                ThemeMode.Dark -> Icons.Outlined.DarkMode to stringResource(R.string.cd_theme_dark)
+                ThemeMode.FollowSystem -> Icons.Outlined.BrightnessAuto to stringResource(R.string.cd_theme_system)
             }
             Icon(
                 imageVector = icon,
@@ -45,7 +47,7 @@ fun ThemePickerMenuButton(
             onDismissRequest = { expanded = false },
         ) {
             ThemeOptionMenuItem(
-                label = "Light",
+                label = stringResource(R.string.theme_light),
                 selected = themeMode == ThemeMode.Light,
                 onClick = {
                     onThemeModeChange(ThemeMode.Light)
@@ -53,7 +55,7 @@ fun ThemePickerMenuButton(
                 },
             )
             ThemeOptionMenuItem(
-                label = "Dark",
+                label = stringResource(R.string.theme_dark),
                 selected = themeMode == ThemeMode.Dark,
                 onClick = {
                     onThemeModeChange(ThemeMode.Dark)
@@ -61,7 +63,7 @@ fun ThemePickerMenuButton(
                 },
             )
             ThemeOptionMenuItem(
-                label = "Follow system",
+                label = stringResource(R.string.theme_follow_system),
                 selected = themeMode == ThemeMode.FollowSystem,
                 onClick = {
                     onThemeModeChange(ThemeMode.FollowSystem)

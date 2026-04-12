@@ -1,16 +1,19 @@
 package com.challange.atomictracker.feature.feed
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
@@ -30,10 +33,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.challange.atomictracker.R
 import com.challange.atomictracker.core.designsystem.components.FeedConnectionIndicator
 import com.challange.atomictracker.core.designsystem.components.StockQuoteGridItem
 import com.challange.atomictracker.core.designsystem.components.StockQuoteListItem
@@ -47,7 +52,7 @@ import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.collections.immutable.persistentListOf
 
-private val GridMinCellWidth = 100.dp
+private val GridMinCellWidth = 120.dp
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -89,8 +94,13 @@ fun FeedScreenContent(
     }
 
     AtomicTrackerScaffold(
-        title = "Stocks",
-        navigationIcon = { FeedConnectionIndicator(liveFeedConnectionState) },
+        title = stringResource(R.string.feed_title),
+        navigationIcon = {
+            Row {
+                Spacer(Modifier.size(12.dp))
+                FeedConnectionIndicator(liveFeedConnectionState)
+            }
+        },
         actions = {
             ThemePickerMenuButton(
                 themeMode = themeMode,
@@ -99,7 +109,11 @@ fun FeedScreenContent(
             IconButton(onClick = { isListView = !isListView }) {
                 Icon(
                     imageVector = if (isListView) Icons.Default.GridView else Icons.AutoMirrored.Filled.ViewList,
-                    contentDescription = if (isListView) "Grid view" else "List view"
+                    contentDescription = if (isListView) {
+                        stringResource(R.string.cd_layout_grid)
+                    } else {
+                        stringResource(R.string.cd_layout_list)
+                    }
                 )
             }
 
@@ -119,7 +133,10 @@ fun FeedScreenContent(
             }
 
             is FeedUiState.Empty -> {
-                AtomicTrackerErrorMessage("No stocks to show", padding = innerPadding)
+                AtomicTrackerErrorMessage(
+                    stringResource(R.string.empty_feed),
+                    padding = innerPadding,
+                )
             }
 
             is FeedUiState.Success -> {
@@ -165,8 +182,8 @@ private fun ToggleFeedIcon(
                                 else -> Icons.Default.PlayCircle
                             },
                             contentDescription = when {
-                                connected -> "Pause live updates"
-                                else -> "Resume live updates"
+                                connected -> stringResource(R.string.cd_live_pause)
+                                else -> stringResource(R.string.cd_live_resume)
                             },
                         )
                     }
@@ -193,6 +210,10 @@ private fun FeedSuccessContent(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalItemSpacing = 12.dp
     ) {
+        val span = if (isListView) StaggeredGridItemSpan.SingleLane else StaggeredGridItemSpan.FullLine
+
+        item(span = span) { Spacer(Modifier.size(8.dp)) }
+
         if (isListView) {
             items(items = state.stocks, key = { it.symbol }) { stock ->
                 StockQuoteListItem(
@@ -216,6 +237,8 @@ private fun FeedSuccessContent(
                 )
             }
         }
+
+        item(span = span) { Spacer(Modifier.size(32.dp)) }
     }
 }
 

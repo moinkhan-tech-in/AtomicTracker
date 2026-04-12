@@ -71,8 +71,7 @@ class DetailViewModelTest {
         viewModel.uiState.test {
             assertEquals(DetailUiState.Loading, awaitItem())
             mainDispatcherRule.testDispatcher.scheduler.advanceUntilIdle()
-            val error = awaitItem() as DetailUiState.Error
-            assertEquals("Could not load $symbol", error.message)
+            assertEquals(DetailUiState.Error(message = ""), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

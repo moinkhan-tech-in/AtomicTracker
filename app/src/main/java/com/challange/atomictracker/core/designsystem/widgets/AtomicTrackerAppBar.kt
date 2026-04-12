@@ -6,12 +6,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -19,12 +17,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AtomicTrackerAppBar(
     title: String,
-    modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
-        containerColor = Color.Transparent
-    ),
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     TopAppBar(
@@ -37,10 +31,9 @@ fun AtomicTrackerAppBar(
                 style = MaterialTheme.typography.titleLarge,
             )
         },
-        modifier = modifier.padding(horizontal = 12.dp),
         navigationIcon = navigationIcon,
         actions = actions,
-        colors = colors,
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         scrollBehavior = scrollBehavior,
     )
 }

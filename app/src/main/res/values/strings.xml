@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">AtomicTracker</string>
+
+    <string name="feed_title">Stocks</string>
+    <string name="empty_feed">No stocks to show</string>
+
+    <string name="detail_last_price">Last price</string>
+    <string name="detail_change">Change</string>
+
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_follow_system">Follow system</string>
+
+    <string name="cd_back">Back</string>
+    <string name="cd_layout_grid">Grid view</string>
+    <string name="cd_layout_list">List view</string>
+    <string name="cd_live_pause">Pause live updates</string>
+    <string name="cd_live_resume">Resume live updates</string>
+    <string name="cd_theme_light">Light theme</string>
+    <string name="cd_theme_dark">Dark theme</string>
+    <string name="cd_theme_system">System theme</string>
+
+    <string name="error_load_feed">Could not load stocks</string>
+    <string name="error_load_stock">Could not load %1$s</string>
 </resources>

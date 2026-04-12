@@ -1,28 +1,25 @@
 package com.challange.atomictracker.core.designsystem.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.TrendingFlat
-import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material.icons.automirrored.filled.TrendingFlat
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import com.challange.atomictracker.core.domain.model.PriceDirection
+import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
+import com.challange.atomictracker.core.domain.model.PriceDirection
 
 @Composable
 fun PriceChangeDirectionIcon(
     direction: PriceDirection,
-    modifier: Modifier = Modifier,
     contentDescription: String? = null,
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
@@ -37,38 +34,28 @@ fun PriceChangeDirectionIcon(
         when (dir) {
             PriceDirection.Neutral -> {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.TrendingFlat,
+                    imageVector = Icons.AutoMirrored.Filled.TrendingFlat,
                     contentDescription = contentDescription,
                     tint = tokens.neutral,
-                    modifier = modifier,
+                    modifier = Modifier.size(28.dp)
                 )
             }
 
             PriceDirection.Up -> {
                 Icon(
-                    imageVector = Icons.Rounded.ArrowUpward,
+                    imageVector = Icons.Default.ArrowDropUp,
                     contentDescription = contentDescription,
                     tint = tokens.positive,
-                    modifier = modifier,
+                    modifier = Modifier.size(28.dp)
                 )
             }
 
             PriceDirection.Down -> {
-                val flipRotation by animateFloatAsState(
-                    targetValue = 180f,
-                    animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
-                    label = "arrowDownRotation",
-                )
-                val tint by animateColorAsState(
-                    targetValue = tokens.negative,
-                    animationSpec = tween(220),
-                    label = "arrowDownTint",
-                )
                 Icon(
-                    imageVector = Icons.Rounded.ArrowUpward,
+                    imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = contentDescription,
-                    tint = tint,
-                    modifier = modifier.graphicsLayer { rotationZ = flipRotation },
+                    tint = tokens.negative,
+                    modifier = Modifier.size(28.dp)
                 )
             }
         }

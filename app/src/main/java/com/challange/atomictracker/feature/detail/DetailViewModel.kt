@@ -17,20 +17,14 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    observeStock: GetStockSymbolFlowUseCase,
+    observeStock: GetStockSymbolFlowUseCase
 ) : ViewModel() {
 
     private val symbol: String = savedStateHandle.toRoute<DetailRoute>().symbol
 
     val uiState: StateFlow<DetailUiState> = observeStock(symbol)
         .map { stock -> DetailUiState.Success(stock) as DetailUiState }
-        .catch { throwable ->
-            emit(
-                DetailUiState.Error(
-                    message = throwable.message.orEmpty().ifBlank { "Could not load $symbol" },
-                ),
-            )
-        }
+        .catch { t -> emit(DetailUiState.Error(message = t.message.orEmpty())) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

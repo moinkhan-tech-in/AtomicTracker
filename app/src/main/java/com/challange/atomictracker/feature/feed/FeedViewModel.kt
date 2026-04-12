@@ -2,8 +2,8 @@ package com.challange.atomictracker.feature.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.challange.atomictracker.core.domain.usecase.GetFeedStocksFlowUseCase
 import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.core.domain.usecase.GetFeedStocksFlowUseCase
 import com.challange.atomictracker.core.domain.usecase.GetLiveFeedConnectionStateFlowUseCase
 import com.challange.atomictracker.core.domain.usecase.SetLiveFeedEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class FeedViewModel @Inject constructor(
     getFeedStocksFlowUseCase: GetFeedStocksFlowUseCase,
     liveFeedFlowUseCase: GetLiveFeedConnectionStateFlowUseCase,
-    private val setLiveFeedEnabledUseCase: SetLiveFeedEnabledUseCase,
+    private val setLiveFeedEnabledUseCase: SetLiveFeedEnabledUseCase
 ) : ViewModel() {
 
     val liveFeedConnectionState: StateFlow<LiveFeedConnectionState> =
@@ -32,11 +32,7 @@ class FeedViewModel @Inject constructor(
     val uiState: StateFlow<FeedUiState> = getFeedStocksFlowUseCase()
         .map { stocks -> FeedUiState.Success(stocks) as FeedUiState }
         .catch { throwable ->
-            emit(
-                FeedUiState.Error(
-                    message = throwable.message.orEmpty().ifBlank { "Could not load stocks" },
-                ),
-            )
+            emit(FeedUiState.Error(message = throwable.message.orEmpty()))
         }
         .stateIn(
             scope = viewModelScope,

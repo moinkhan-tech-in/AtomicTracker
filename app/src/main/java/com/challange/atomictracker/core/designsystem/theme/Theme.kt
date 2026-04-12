@@ -42,7 +42,7 @@ fun AtomicTrackerTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = MaterialTheme.typography,
+        typography = Typography,
     ) {
         CompositionLocalProvider(LocalAtomicTrackerColorScheme provides trackerColorScheme) {
             content()

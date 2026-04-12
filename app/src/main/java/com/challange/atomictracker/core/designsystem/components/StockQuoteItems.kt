@@ -1,8 +1,9 @@
 package com.challange.atomictracker.core.designsystem.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -38,13 +38,13 @@ import java.util.Locale
 private const val PRICE_FLASH_DURATION_MS = 2000
 
 @Composable
-private fun QuoteFlashPriceText(
+fun QuoteFlashPriceText(
     price: Double,
     change: Double,
     flashColor: Color,
     style: TextStyle,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Unspecified,
+    textAlign: TextAlign = TextAlign.Unspecified
 ) {
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
     val priceText = remember(price) { currencyFormat.format(price) }
@@ -57,7 +57,13 @@ private fun QuoteFlashPriceText(
             return@LaunchedEffect
         }
         progress.snapTo(0f)
-        progress.animateTo(1f, tween(durationMillis = PRICE_FLASH_DURATION_MS))
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = PRICE_FLASH_DURATION_MS,
+                easing = FastOutLinearInEasing
+            )
+        )
     }
 
     val priceColor = lerp(flashColor, baseColor, progress.value)
@@ -77,7 +83,7 @@ fun StockQuoteListItem(
     price: Double,
     change: Double,
     direction: PriceDirection,
-    onClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
@@ -85,14 +91,13 @@ fun StockQuoteListItem(
         PriceDirection.Down -> tokens.negative
         PriceDirection.Neutral -> tokens.neutral
     }
-    val cardModifier = Modifier
-        .fillMaxWidth()
-        .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
 
     Card(
-        modifier = cardModifier,
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant),
+        onClick = { onClick?.invoke() }
     ) {
         Row(
             modifier = Modifier
@@ -140,8 +145,7 @@ fun StockQuoteListItem(
                     )
                     PriceChangeDirectionIcon(
                         direction = direction,
-                        modifier = Modifier.size(20.dp),
-                        contentDescription = null,
+                        contentDescription = null
                     )
                 }
             }
@@ -156,8 +160,7 @@ fun StockQuoteGridItem(
     price: Double,
     change: Double,
     direction: PriceDirection,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
@@ -165,15 +168,13 @@ fun StockQuoteGridItem(
         PriceDirection.Down -> tokens.negative
         PriceDirection.Neutral -> tokens.neutral
     }
-    val cardModifier = modifier
-        .fillMaxWidth()
-        .aspectRatio(1f)
-        .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
 
     Card(
-        modifier = cardModifier,
+        modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant),
+        onClick = { onClick?.invoke() }
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(12.dp),
@@ -222,7 +223,6 @@ fun StockQuoteGridItem(
                 )
                 PriceChangeDirectionIcon(
                     direction = direction,
-                    modifier = Modifier.size(20.dp),
                     contentDescription = null,
                 )
             }
@@ -253,8 +253,7 @@ private fun StockQuoteGridItemPreview() {
             companyName = "NVIDIA Corporation",
             price = 143.9,
             change = -2.15,
-            direction = PriceDirection.Down,
-            modifier = Modifier.padding(16.dp),
+            direction = PriceDirection.Down
         )
     }
 }
