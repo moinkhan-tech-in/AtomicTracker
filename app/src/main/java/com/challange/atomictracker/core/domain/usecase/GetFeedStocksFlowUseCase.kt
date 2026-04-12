@@ -11,5 +11,9 @@ class GetFeedStocksFlowUseCase(
     private val stockRepository: StockRepository,
 ) {
     operator fun invoke(): Flow<ImmutableList<Stock>> =
-        stockRepository.observeStocksList().map { it.toImmutableList() }
+        stockRepository.observeStocksList().map { stocks ->
+            stocks
+                .sortedByDescending(Stock::price)
+                .toImmutableList()
+        }
 }

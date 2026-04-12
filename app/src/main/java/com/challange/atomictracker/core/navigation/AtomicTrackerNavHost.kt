@@ -24,9 +24,13 @@ fun AtomicTrackerNavHost(
         navController = navController,
         startDestination = FeedRoute,
         modifier = modifier.fillMaxSize(),
+        enterTransition = { enterForward() },
+        exitTransition = { exitForward() },
+        popEnterTransition = { popEnter() },
+        popExitTransition = { popExit() }
     ) {
         composable<FeedRoute>(
-            deepLinks = listOf(navDeepLink<FeedRoute>(basePath = "stocks://feed")),
+            deepLinks = listOf(navDeepLink<FeedRoute>(basePath = "stocks://feed"))
         ) {
             FeedScreen(
                 onOpenDetail = { symbol -> navController.navigate(DetailRoute(symbol = symbol)) },

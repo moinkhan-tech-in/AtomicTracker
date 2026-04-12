@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.challange.atomictracker.R
+import com.challange.atomictracker.core.designsystem.components.FeedConnectionIndicator
+import com.challange.atomictracker.core.designsystem.components.LiveFeedToggleButton
 import com.challange.atomictracker.core.designsystem.components.PriceChangeDirectionIcon
 import com.challange.atomictracker.core.designsystem.components.QuoteFlashPriceText
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
@@ -37,6 +40,7 @@ import com.challange.atomictracker.core.designsystem.theme.ThemePickerMenuButton
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerCircularLoader
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerErrorMessage
 import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffold
+import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.PriceDirection
 import com.challange.atomictracker.core.domain.model.Stock
 import java.util.Locale
@@ -51,10 +55,13 @@ fun DetailScreen(
     onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val liveFeedConnectionState by viewModel.liveFeedConnectionState.collectAsStateWithLifecycle()
     DetailScreenContent(
         symbol = symbol,
         uiState = uiState,
         onBack = onBack,
+        liveFeedConnectionState = liveFeedConnectionState,
+        onSetLiveFeedEnabled = viewModel::setLiveFeedEnabled,
         themeMode = themeMode,
         onThemeModeChange = onThemeModeChange,
     )
@@ -66,6 +73,8 @@ fun DetailScreenContent(
     symbol: String,
     uiState: DetailUiState,
     onBack: () -> Unit,
+    liveFeedConnectionState: LiveFeedConnectionState,
+    onSetLiveFeedEnabled: (Boolean) -> Unit,
     themeMode: ThemeMode = ThemeMode.FollowSystem,
     onThemeModeChange: (ThemeMode) -> Unit = {}
 ) {
@@ -76,17 +85,25 @@ fun DetailScreenContent(
     AtomicTrackerScaffold(
         title = title,
         navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_back),
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_back),
+                    )
+                }
+                Spacer(Modifier.size(12.dp))
+                FeedConnectionIndicator(liveFeedConnectionState)
             }
         },
         actions = {
             ThemePickerMenuButton(
                 themeMode = themeMode,
                 onThemeModeChange = onThemeModeChange
+            )
+            LiveFeedToggleButton(
+                liveFeedConnectionState = liveFeedConnectionState,
+                onSetLiveFeedEnabled = onSetLiveFeedEnabled,
             )
         },
     ) { innerPadding ->
@@ -189,6 +206,8 @@ private fun DetailScreenSuccessPreview() {
                 Stock("AAPL", 189.42, 1.25, "Apple Inc."),
             ),
             onBack = {},
+            liveFeedConnectionState = LiveFeedConnectionState.Connected,
+            onSetLiveFeedEnabled = {},
         )
     }
 }
@@ -202,6 +221,8 @@ private fun DetailScreenLoadingPreview() {
             symbol = "NVDA",
             uiState = DetailUiState.Loading,
             onBack = {},
+            liveFeedConnectionState = LiveFeedConnectionState.Connecting,
+            onSetLiveFeedEnabled = {},
         )
     }
 }

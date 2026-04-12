@@ -36,7 +36,7 @@ import com.challange.atomictracker.core.domain.model.PriceDirection
 import java.text.NumberFormat
 import java.util.Locale
 
-private const val PRICE_FLASH_DURATION_MS = 2000
+private const val PRICE_FLASH_DURATION_MS = 1000
 
 @Composable
 fun QuoteFlashPriceText(

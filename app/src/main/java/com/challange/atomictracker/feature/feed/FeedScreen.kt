@@ -1,6 +1,5 @@
 package com.challange.atomictracker.feature.feed
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
@@ -19,9 +19,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.PauseCircle
-import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -43,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.challange.atomictracker.R
 import com.challange.atomictracker.core.designsystem.components.FeedConnectionIndicator
+import com.challange.atomictracker.core.designsystem.components.LiveFeedToggleButton
 import com.challange.atomictracker.core.designsystem.components.StockQuoteGridItem
 import com.challange.atomictracker.core.designsystem.components.StockQuoteListItem
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
@@ -54,8 +51,6 @@ import com.challange.atomictracker.core.designsystem.widgets.AtomicTrackerScaffo
 import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.collections.immutable.persistentListOf
-
-private val GridMinCellWidth = 120.dp
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -92,8 +87,8 @@ fun FeedScreenContent(
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val gridColumns = remember(isListView) {
         when {
-            isListView -> StaggeredGridCells.Fixed(1)
-            else -> StaggeredGridCells.Adaptive(GridMinCellWidth)
+            isListView -> StaggeredGridCells.Adaptive(320.dp)
+            else -> StaggeredGridCells.Adaptive(120.dp)
         }
     }
 
@@ -122,7 +117,7 @@ fun FeedScreenContent(
                 )
             }
 
-            ToggleFeedIcon(
+            LiveFeedToggleButton(
                 liveFeedConnectionState = liveFeedConnectionState,
                 onSetLiveFeedEnabled = onSetLiveFeedEnabled
             )
@@ -159,47 +154,7 @@ fun FeedScreenContent(
     }
 }
 
-@Composable
-private fun ToggleFeedIcon(
-    liveFeedConnectionState: LiveFeedConnectionState,
-    onSetLiveFeedEnabled: (Boolean) -> Unit
-) {
-    Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
-        Crossfade(liveFeedConnectionState, modifier = Modifier.size(24.dp)) {
-            when (it) {
-                LiveFeedConnectionState.Connecting -> {
-                    CircularProgressIndicator(Modifier.size(24.dp))
-                }
-
-                else -> {
-                    IconButton(
-                        onClick = {
-                            when (liveFeedConnectionState) {
-                                LiveFeedConnectionState.Disconnected -> onSetLiveFeedEnabled(true)
-                                LiveFeedConnectionState.Connected -> onSetLiveFeedEnabled(false)
-                                LiveFeedConnectionState.Connecting -> {}
-                            }
-                        },
-                    ) {
-                        val connected = liveFeedConnectionState == LiveFeedConnectionState.Connected
-                        Icon(
-                            imageVector = when {
-                                connected -> Icons.Default.PauseCircle
-                                else -> Icons.Default.PlayCircle
-                            },
-                            contentDescription = when {
-                                connected -> stringResource(R.string.cd_live_pause)
-                                else -> stringResource(R.string.cd_live_resume)
-                            },
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedSuccessContent(
     state: FeedUiState.Success,
@@ -221,35 +176,37 @@ private fun FeedSuccessContent(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalItemSpacing = 12.dp
     ) {
-        val span = if (isListView) StaggeredGridItemSpan.SingleLane else StaggeredGridItemSpan.FullLine
-
-        item(span = span) { Spacer(Modifier.size(8.dp)) }
+        item(span = StaggeredGridItemSpan.FullLine) { Spacer(Modifier.size(8.dp)) }
 
         if (isListView) {
             items(items = state.stocks, key = { it.symbol }) { stock ->
-                StockQuoteListItem(
-                    symbol = stock.symbol,
-                    companyName = stock.companyName,
-                    price = stock.price,
-                    change = stock.change,
-                    direction = stock.priceDirection(),
-                    onClick = { onOpenDetail(stock.symbol) },
-                )
+                Box(Modifier.fillMaxWidth().animateItem()) {
+                    StockQuoteListItem(
+                        symbol = stock.symbol,
+                        companyName = stock.companyName,
+                        price = stock.price,
+                        change = stock.change,
+                        direction = stock.priceDirection(),
+                        onClick = { onOpenDetail(stock.symbol) },
+                    )
+                }
             }
         } else {
             items(items = state.stocks, key = { it.symbol }) { stock ->
-                StockQuoteGridItem(
-                    symbol = stock.symbol,
-                    companyName = stock.companyName,
-                    price = stock.price,
-                    change = stock.change,
-                    direction = stock.priceDirection(),
-                    onClick = { onOpenDetail(stock.symbol) },
-                )
+                Box(Modifier.fillMaxWidth().animateItem()) {
+                    StockQuoteGridItem(
+                        symbol = stock.symbol,
+                        companyName = stock.companyName,
+                        price = stock.price,
+                        change = stock.change,
+                        direction = stock.priceDirection(),
+                        onClick = { onOpenDetail(stock.symbol) },
+                    )
+                }
             }
         }
 
-        item(span = span) { Spacer(Modifier.size(32.dp)) }
+        item(span = StaggeredGridItemSpan.FullLine) { Spacer(Modifier.size(32.dp)) }
     }
 }
 

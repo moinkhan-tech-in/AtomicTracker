@@ -7,7 +7,9 @@ import com.challange.atomictracker.MainDispatcherRule
 import com.challange.atomictracker.core.data.StockRepository
 import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 import com.challange.atomictracker.core.domain.model.Stock
+import com.challange.atomictracker.core.domain.usecase.GetLiveFeedConnectionStateFlowUseCase
 import com.challange.atomictracker.core.domain.usecase.GetStockSymbolFlowUseCase
+import com.challange.atomictracker.core.domain.usecase.SetLiveFeedEnabledUseCase
 import com.challange.atomictracker.core.navigation.DetailRoute
 import io.mockk.every
 import io.mockk.just
@@ -46,7 +48,7 @@ class DetailViewModelTest {
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
         }
-        val viewModel = DetailViewModel(savedStateHandleFor(symbol), GetStockSymbolFlowUseCase(repo))
+        val viewModel = createDetailViewModel(symbol, repo)
 
         viewModel.uiState.test {
             assertEquals(DetailUiState.Loading, awaitItem())
@@ -66,7 +68,7 @@ class DetailViewModelTest {
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
         }
-        val viewModel = DetailViewModel(savedStateHandleFor(symbol), GetStockSymbolFlowUseCase(repo))
+        val viewModel = createDetailViewModel(symbol, repo)
 
         viewModel.uiState.test {
             assertEquals(DetailUiState.Loading, awaitItem())
@@ -87,7 +89,7 @@ class DetailViewModelTest {
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
         }
-        val viewModel = DetailViewModel(savedStateHandleFor(symbol), GetStockSymbolFlowUseCase(repo))
+        val viewModel = createDetailViewModel(symbol, repo)
 
         viewModel.uiState.test {
             awaitItem()
@@ -101,4 +103,12 @@ class DetailViewModelTest {
 
     private fun savedStateHandleFor(symbol: String): SavedStateHandle =
         SavedStateHandle(DetailRoute(symbol = symbol))
+
+    private fun createDetailViewModel(symbol: String, repo: StockRepository): DetailViewModel =
+        DetailViewModel(
+            savedStateHandleFor(symbol),
+            GetStockSymbolFlowUseCase(repo),
+            GetLiveFeedConnectionStateFlowUseCase(repo),
+            SetLiveFeedEnabledUseCase(repo),
+        )
 }
