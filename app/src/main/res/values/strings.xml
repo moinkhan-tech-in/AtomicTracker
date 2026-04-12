@@ -4,7 +4,7 @@
     <string name="feed_title">Stocks</string>
     <string name="empty_feed">No stocks to show</string>
 
-    <string name="detail_last_price">Last price</string>
+    <string name="detail_last_price">Price</string>
     <string name="detail_change">Change</string>
 
     <string name="theme_light">Light</string>
