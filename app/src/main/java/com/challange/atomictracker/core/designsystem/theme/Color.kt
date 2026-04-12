@@ -6,25 +6,36 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 
-
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
 val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color(0xFF60A5FA),      // Calm blue (actions)
+    secondary = Color(0xFF22C55E),    // Profit hint
+    tertiary = Color(0xFFF59E0B),     // Accent (warning/neutral highlight)
+
+    background = Color(0xFF0B0F19),   // Deep navy (not pure black)
+    surface = Color(0xFF121826),      // Card background
+    surfaceVariant = Color(0xFF1E293B),
+
+    onPrimary = Color.Black,
+    onBackground = Color(0xFFE5E7EB),
+    onSurface = Color(0xFFE5E7EB),
+
+    error = Color(0xFFEF4444)         // Loss
 )
 
 val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Color(0xFF2563EB),      // Strong blue
+    secondary = Color(0xFF16A34A),    // Profit
+    tertiary = Color(0xFFD97706),     // Accent
+
+    background = Color(0xFFF8FAFC),   // Soft white (not harsh)
+    surface = Color(0xFFFFFFFF),
+    surfaceVariant = Color(0xFFE2E8F0),
+
+    onPrimary = Color.White,
+    onBackground = Color(0xFF0F172A),
+    onSurface = Color(0xFF0F172A),
+
+    error = Color(0xFFDC2626)         // Loss
 )
 
 
@@ -33,8 +44,6 @@ fun lerpAtomicTrackerColorScheme(
     to: AtomicTrackerColorScheme,
     fraction: Float
 ) = from.copy(
-    positive = lerp(from.positive, to.positive, fraction),
-    negative = lerp(from.negative, to.negative, fraction),
     neutral = lerp(from.neutral, to.neutral, fraction)
 )
 

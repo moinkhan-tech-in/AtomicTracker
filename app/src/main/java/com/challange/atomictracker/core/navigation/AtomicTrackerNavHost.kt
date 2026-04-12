@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.challange.atomictracker.core.designsystem.theme.ThemeMode
 import com.challange.atomictracker.feature.detail.DetailScreen
@@ -24,14 +25,18 @@ fun AtomicTrackerNavHost(
         startDestination = FeedRoute,
         modifier = modifier.fillMaxSize(),
     ) {
-        composable<FeedRoute> {
+        composable<FeedRoute>(
+            deepLinks = listOf(navDeepLink<FeedRoute>(basePath = "stocks://feed")),
+        ) {
             FeedScreen(
                 onOpenDetail = { symbol -> navController.navigate(DetailRoute(symbol = symbol)) },
                 themeMode = themeMode,
                 onThemeModeChange = onThemeModeChange
             )
         }
-        composable<DetailRoute> { backStackEntry ->
+        composable<DetailRoute>(
+            deepLinks = listOf(navDeepLink<DetailRoute>(basePath = "stocks://symbol"))
+        ) { backStackEntry ->
             val route = backStackEntry.toRoute<DetailRoute>()
             DetailScreen(
                 symbol = route.symbol,

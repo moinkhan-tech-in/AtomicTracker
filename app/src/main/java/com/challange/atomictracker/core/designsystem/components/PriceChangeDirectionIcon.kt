@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingFlat
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,7 @@ import com.challange.atomictracker.core.domain.model.PriceDirection
 @Composable
 fun PriceChangeDirectionIcon(
     direction: PriceDirection,
-    contentDescription: String? = null,
+    contentDescription: String? = null
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
 
@@ -37,7 +38,7 @@ fun PriceChangeDirectionIcon(
                     imageVector = Icons.AutoMirrored.Filled.TrendingFlat,
                     contentDescription = contentDescription,
                     tint = tokens.neutral,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
 
@@ -45,8 +46,8 @@ fun PriceChangeDirectionIcon(
                 Icon(
                     imageVector = Icons.Default.ArrowDropUp,
                     contentDescription = contentDescription,
-                    tint = tokens.positive,
-                    modifier = Modifier.size(28.dp)
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(32.dp)
                 )
             }
 
@@ -54,8 +55,8 @@ fun PriceChangeDirectionIcon(
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = contentDescription,
-                    tint = tokens.negative,
-                    modifier = Modifier.size(28.dp)
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }

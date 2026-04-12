@@ -4,13 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-val SemanticPositiveLight = Color(0xFF1B5E20)
-val SemanticPositiveDark = Color(0xFF69F0AE)
-val SemanticNegativeLight = Color(0xFFB71C1C)
-val SemanticNegativeDark = Color(0xFFFF8A80)
-
-val SemanticNeutralLight = Color(0xFF546E7A)
-val SemanticNeutralDark = Color(0xFFB0BEC5)
 
 @Immutable
 data class AtomicTrackerColorScheme(
@@ -19,16 +12,17 @@ data class AtomicTrackerColorScheme(
     val neutral: Color,
 )
 
+
 val LightAtomicTrackerColorScheme = AtomicTrackerColorScheme(
-    positive = SemanticPositiveLight,
-    negative = SemanticNegativeLight,
-    neutral = SemanticNeutralLight,
+    positive = Color(0xFF16A34A), // deeper green
+    negative = Color(0xFFDC2626), // deeper red
+    neutral = Color(0xFF6B7280)   // darker gray
 )
 
 val DarkAtomicTrackerColorScheme = AtomicTrackerColorScheme(
-    positive = SemanticPositiveDark,
-    negative = SemanticNegativeDark,
-    neutral = SemanticNeutralDark,
+    positive = Color(0xFF4ADE80), // softer bright green
+    negative = Color(0xFFF87171), // softer red
+    neutral = Color(0xFF9CA3AF)   // gray
 )
 
 val LocalAtomicTrackerColorScheme = staticCompositionLocalOf<AtomicTrackerColorScheme> {

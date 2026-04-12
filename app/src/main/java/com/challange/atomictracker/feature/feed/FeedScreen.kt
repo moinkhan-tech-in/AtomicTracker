@@ -25,6 +25,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,6 +89,7 @@ fun FeedScreenContent(
 ) {
     var isListView by rememberSaveable { mutableStateOf(true) }
     val feedGridState = rememberLazyStaggeredGridState()
+    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val gridColumns = remember(isListView) {
         when {
             isListView -> StaggeredGridCells.Fixed(1)
@@ -95,6 +99,7 @@ fun FeedScreenContent(
 
     AtomicTrackerScaffold(
         title = stringResource(R.string.feed_title),
+        scrollBehavior = topAppBarScrollBehavior,
         navigationIcon = {
             Row {
                 Spacer(Modifier.size(12.dp))
@@ -145,6 +150,7 @@ fun FeedScreenContent(
                     isListView = isListView,
                     gridColumns = gridColumns,
                     feedGridState = feedGridState,
+                    topAppBarScrollBehavior = topAppBarScrollBehavior,
                     onOpenDetail = onOpenDetail,
                     innerPadding = innerPadding
                 )
@@ -193,19 +199,24 @@ private fun ToggleFeedIcon(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedSuccessContent(
     state: FeedUiState.Success,
     isListView: Boolean,
     gridColumns: StaggeredGridCells,
     feedGridState: LazyStaggeredGridState,
+    topAppBarScrollBehavior: TopAppBarScrollBehavior,
     onOpenDetail: (String) -> Unit,
     innerPadding: PaddingValues
 ) {
     LazyVerticalStaggeredGrid(
         columns = gridColumns,
         state = feedGridState,
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         contentPadding = innerPadding,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalItemSpacing = 12.dp

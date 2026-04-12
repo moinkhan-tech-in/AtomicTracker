@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,7 +71,7 @@ fun QuoteFlashPriceText(
     Text(
         text = priceText,
         modifier = modifier,
-        style = style,
+        style = style.copy(fontWeight = FontWeight.Bold),
         color = priceColor,
         textAlign = textAlign,
     )
@@ -96,7 +97,7 @@ fun StockQuoteListItem(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant),
+        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.outlineVariant),
         onClick = { onClick?.invoke() }
     ) {
         Row(
@@ -121,26 +122,23 @@ fun StockQuoteListItem(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Column(
-                horizontalAlignment = Alignment.End,
-            ) {
+            Column(horizontalAlignment = Alignment.End) {
                 QuoteFlashPriceText(
                     price = price,
                     change = change,
                     flashColor = changeColor,
                     style = MaterialTheme.typography.titleLarge,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     val changeText = remember(change) {
                         String.format(Locale.US, "%+.2f", change)
                     }
                     Text(
                         text = changeText,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = changeColor,
                     )
                     PriceChangeDirectionIcon(
@@ -173,7 +171,7 @@ fun StockQuoteGridItem(
         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant),
+        border = BorderStroke(.5.dp, color = MaterialTheme.colorScheme.outlineVariant),
         onClick = { onClick?.invoke() }
     ) {
         Column(
@@ -203,11 +201,10 @@ fun StockQuoteGridItem(
                 price = price,
                 change = change,
                 flashColor = changeColor,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
             )
-            Spacer(modifier = Modifier.height(4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -218,7 +215,7 @@ fun StockQuoteGridItem(
                 }
                 Text(
                     text = changeText,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = changeColor,
                 )
                 PriceChangeDirectionIcon(
