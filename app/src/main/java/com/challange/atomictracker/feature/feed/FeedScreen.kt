@@ -158,9 +158,16 @@ private fun ToggleFeedIcon(
                             }
                         },
                     ) {
+                        val connected = liveFeedConnectionState == LiveFeedConnectionState.Connected
                         Icon(
-                            imageVector = if (liveFeedConnectionState == LiveFeedConnectionState.Connected) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
-                            contentDescription = if (liveFeedConnectionState == LiveFeedConnectionState.Connected) "Pause live updates" else "Resume live updates"
+                            imageVector = when {
+                                connected -> Icons.Default.PauseCircle
+                                else -> Icons.Default.PlayCircle
+                            },
+                            contentDescription = when {
+                                connected -> "Pause live updates"
+                                else -> "Resume live updates"
+                            },
                         )
                     }
                 }

@@ -5,7 +5,6 @@ import com.challange.atomictracker.core.data.ws.PostmanEchoWebSocketClient
 import com.challange.atomictracker.core.data.ws.StockDto
 import com.challange.atomictracker.core.domain.model.HARDCODED_STOCKS
 import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -77,22 +76,18 @@ class NetworkStocksDataSource @Inject constructor(
         feedConnectionJob = scope.launch {
             if (_liveFeedConnectionState.value == LiveFeedConnectionState.Disconnected) return@launch
             _liveFeedConnectionState.value = LiveFeedConnectionState.Connecting
-            try {
-                echoWebSocketClient.connect(
-                    onConnectionChange = { connected ->
-                        if (_liveFeedConnectionState.value != LiveFeedConnectionState.Disconnected) {
-                            _liveFeedConnectionState.value = if (connected) {
-                                LiveFeedConnectionState.Connected
-                            } else {
-                                LiveFeedConnectionState.Connecting
-                            }
+            echoWebSocketClient.connect(
+                onConnectionChange = { connected ->
+                    if (_liveFeedConnectionState.value != LiveFeedConnectionState.Disconnected) {
+                        _liveFeedConnectionState.value = if (connected) {
+                            LiveFeedConnectionState.Connected
+                        } else {
+                            LiveFeedConnectionState.Connecting
                         }
-                    },
-                ) { session ->
-                    tickerLoop(session)
-                }
-            } catch (e: CancellationException) {
-                throw e
+                    }
+                },
+            ) { session ->
+                tickerLoop(session)
             }
         }
     }

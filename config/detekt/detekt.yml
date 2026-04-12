@@ -1,0 +1,42 @@
+# Overrides on top of default-detekt-config (buildUponDefaultConfig in Gradle).
+# Detekt 2: thresholds like maxIssues are configured in Gradle (failOnSeverity / ignoreFailures).
+
+complexity:
+  LongMethod:
+    active: false
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable
+      - Preview
+
+coroutines:
+  GlobalCoroutineUsage:
+    active: true
+
+style:
+  ReturnCount:
+    active: false
+  MagicNumber:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
+  MaxLineLength:
+    active: false
+  WildcardImport:
+    active: true
+
+empty-blocks:
+  EmptyCatchBlock:
+    active: true
+  EmptyFunctionBlock:
+    active: true
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+    excludes:
+      - '**/PostmanEchoWebSocketClient.kt'
+  SwallowedException:
+    active: true

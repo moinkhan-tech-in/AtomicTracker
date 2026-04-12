@@ -1,5 +1,6 @@
 package com.challange.atomictracker.core.data.ws
 
+import android.util.Log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.Channel
@@ -43,6 +44,7 @@ class PostmanEchoWebSocketClient @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                Log.d("PostmanEchoWebSocketClient", "Failed to open session: $e")
                 onConnectionChange(false)
                 delay(backoffMs)
                 backoffMs = (backoffMs * 2)

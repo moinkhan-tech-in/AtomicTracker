@@ -35,7 +35,7 @@ import com.challange.atomictracker.core.domain.model.PriceDirection
 import java.text.NumberFormat
 import java.util.Locale
 
-private const val PriceFlashDurationMs = 2000
+private const val PRICE_FLASH_DURATION_MS = 2000
 
 @Composable
 private fun QuoteFlashPriceText(
@@ -57,7 +57,7 @@ private fun QuoteFlashPriceText(
             return@LaunchedEffect
         }
         progress.snapTo(0f)
-        progress.animateTo(1f, tween(durationMillis = PriceFlashDurationMs))
+        progress.animateTo(1f, tween(durationMillis = PRICE_FLASH_DURATION_MS))
     }
 
     val priceColor = lerp(flashColor, baseColor, progress.value)
