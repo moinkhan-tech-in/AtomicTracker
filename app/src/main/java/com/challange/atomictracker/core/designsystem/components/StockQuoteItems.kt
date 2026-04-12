@@ -88,9 +88,9 @@ fun StockQuoteListItem(
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
-        PriceDirection.Up -> tokens.positive
-        PriceDirection.Down -> tokens.negative
-        PriceDirection.Neutral -> tokens.neutral
+        PriceDirection.Up -> tokens.pricePositive
+        PriceDirection.Down -> tokens.priceNegative
+        PriceDirection.Neutral -> tokens.priceNeutral
     }
 
     Card(
@@ -110,13 +110,13 @@ fun StockQuoteListItem(
             Column(modifier = Modifier.weight(1f, fill = false)) {
                 Text(
                     text = symbol,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = companyName,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -141,10 +141,7 @@ fun StockQuoteListItem(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = changeColor,
                     )
-                    PriceChangeDirectionIcon(
-                        direction = direction,
-                        contentDescription = null
-                    )
+                    PriceChangeDirectionIcon(direction = direction)
                 }
             }
         }
@@ -162,9 +159,9 @@ fun StockQuoteGridItem(
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (direction) {
-        PriceDirection.Up -> tokens.positive
-        PriceDirection.Down -> tokens.negative
-        PriceDirection.Neutral -> tokens.neutral
+        PriceDirection.Up -> tokens.pricePositive
+        PriceDirection.Down -> tokens.priceNegative
+        PriceDirection.Neutral -> tokens.priceNeutral
     }
 
     Card(
@@ -182,7 +179,7 @@ fun StockQuoteGridItem(
             Text(
                 text = symbol,
                 modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
             )
@@ -190,7 +187,7 @@ fun StockQuoteGridItem(
             Text(
                 text = companyName,
                 modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -218,10 +215,7 @@ fun StockQuoteGridItem(
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = changeColor,
                 )
-                PriceChangeDirectionIcon(
-                    direction = direction,
-                    contentDescription = null,
-                )
+                PriceChangeDirectionIcon(direction = direction)
             }
         }
     }

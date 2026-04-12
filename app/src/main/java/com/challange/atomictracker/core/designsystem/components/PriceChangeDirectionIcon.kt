@@ -19,10 +19,7 @@ import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerCol
 import com.challange.atomictracker.core.domain.model.PriceDirection
 
 @Composable
-fun PriceChangeDirectionIcon(
-    direction: PriceDirection,
-    contentDescription: String? = null
-) {
+fun PriceChangeDirectionIcon(direction: PriceDirection) {
     val tokens = LocalAtomicTrackerColorScheme.current
 
     AnimatedContent(
@@ -36,8 +33,8 @@ fun PriceChangeDirectionIcon(
             PriceDirection.Neutral -> {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.TrendingFlat,
-                    contentDescription = contentDescription,
-                    tint = tokens.neutral,
+                    contentDescription = null,
+                    tint = tokens.priceNeutral,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -45,7 +42,7 @@ fun PriceChangeDirectionIcon(
             PriceDirection.Up -> {
                 Icon(
                     imageVector = Icons.Default.ArrowDropUp,
-                    contentDescription = contentDescription,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(32.dp)
                 )
@@ -54,7 +51,7 @@ fun PriceChangeDirectionIcon(
             PriceDirection.Down -> {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = contentDescription,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(32.dp)
                 )

@@ -7,22 +7,22 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class AtomicTrackerColorScheme(
-    val positive: Color,
-    val negative: Color,
-    val neutral: Color,
+    val pricePositive: Color,
+    val priceNegative: Color,
+    val priceNeutral: Color
 )
 
 
 val LightAtomicTrackerColorScheme = AtomicTrackerColorScheme(
-    positive = Color(0xFF16A34A), // deeper green
-    negative = Color(0xFFDC2626), // deeper red
-    neutral = Color(0xFF6B7280)   // darker gray
+    pricePositive = Color(0xFF16A34A), // deeper green
+    priceNegative = Color(0xFFDC2626), // deeper red
+    priceNeutral = Color(0xFF6B7280)   // darker gray
 )
 
 val DarkAtomicTrackerColorScheme = AtomicTrackerColorScheme(
-    positive = Color(0xFF4ADE80), // softer bright green
-    negative = Color(0xFFF87171), // softer red
-    neutral = Color(0xFF9CA3AF)   // gray
+    pricePositive = Color(0xFF4ADE80), // softer bright green
+    priceNegative = Color(0xFFF87171), // softer red
+    priceNeutral = Color(0xFF9CA3AF)   // gray
 )
 
 val LocalAtomicTrackerColorScheme = staticCompositionLocalOf<AtomicTrackerColorScheme> {

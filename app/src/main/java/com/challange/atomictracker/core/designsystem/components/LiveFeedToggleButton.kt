@@ -12,9 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.challange.atomictracker.R
 import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
 
 @Composable
@@ -46,10 +44,7 @@ fun LiveFeedToggleButton(
                                 connected -> Icons.Default.PauseCircle
                                 else -> Icons.Default.PlayCircle
                             },
-                            contentDescription = when {
-                                connected -> stringResource(R.string.cd_live_pause)
-                                else -> stringResource(R.string.cd_live_resume)
-                            },
+                            contentDescription = null,
                         )
                     }
                 }

@@ -97,7 +97,7 @@ fun FeedScreenContent(
         scrollBehavior = topAppBarScrollBehavior,
         navigationIcon = {
             Row {
-                Spacer(Modifier.size(12.dp))
+                Spacer(Modifier.size(16.dp))
                 FeedConnectionIndicator(liveFeedConnectionState)
             }
         },
@@ -106,14 +106,11 @@ fun FeedScreenContent(
                 themeMode = themeMode,
                 onThemeModeChange = onThemeModeChange
             )
+
             IconButton(onClick = { isListView = !isListView }) {
                 Icon(
                     imageVector = if (isListView) Icons.Default.GridView else Icons.AutoMirrored.Filled.ViewList,
-                    contentDescription = if (isListView) {
-                        stringResource(R.string.cd_layout_grid)
-                    } else {
-                        stringResource(R.string.cd_layout_list)
-                    }
+                    contentDescription = null
                 )
             }
 

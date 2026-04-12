@@ -138,9 +138,9 @@ private fun DetailQuoteBody(
 ) {
     val tokens = LocalAtomicTrackerColorScheme.current
     val changeColor = when (stock.priceDirection()) {
-        PriceDirection.Up -> tokens.positive
-        PriceDirection.Down -> tokens.negative
-        PriceDirection.Neutral -> tokens.neutral
+        PriceDirection.Up -> tokens.pricePositive
+        PriceDirection.Down -> tokens.priceNegative
+        PriceDirection.Neutral -> tokens.priceNeutral
     }
     val changeText = remember(stock.change) {
         String.format(Locale.US, "%+.2f", stock.change)
@@ -187,10 +187,7 @@ private fun DetailQuoteBody(
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = changeColor,
             )
-            PriceChangeDirectionIcon(
-                direction = stock.priceDirection(),
-                contentDescription = null
-            )
+            PriceChangeDirectionIcon(direction = stock.priceDirection())
         }
     }
 }

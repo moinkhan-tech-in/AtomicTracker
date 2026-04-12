@@ -44,7 +44,7 @@ fun lerpAtomicTrackerColorScheme(
     to: AtomicTrackerColorScheme,
     fraction: Float
 ) = from.copy(
-    neutral = lerp(from.neutral, to.neutral, fraction)
+    priceNeutral = lerp(from.priceNeutral, to.priceNeutral, fraction)
 )
 
 fun lerpColorScheme(from: ColorScheme, to: ColorScheme, fraction: Float): ColorScheme =

@@ -32,14 +32,14 @@ fun ThemePickerMenuButton(
     var expanded by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         IconButton(onClick = { expanded = true }) {
-            val (icon, description) = when (themeMode) {
-                ThemeMode.Light -> Icons.Outlined.LightMode to stringResource(R.string.cd_theme_light)
-                ThemeMode.Dark -> Icons.Outlined.DarkMode to stringResource(R.string.cd_theme_dark)
-                ThemeMode.FollowSystem -> Icons.Outlined.BrightnessAuto to stringResource(R.string.cd_theme_system)
+            val icon = when (themeMode) {
+                ThemeMode.Light -> Icons.Outlined.LightMode
+                ThemeMode.Dark -> Icons.Outlined.DarkMode
+                ThemeMode.FollowSystem -> Icons.Outlined.BrightnessAuto
             }
             Icon(
                 imageVector = icon,
-                contentDescription = description,
+                contentDescription = null,
             )
         }
         DropdownMenu(

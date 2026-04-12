@@ -17,9 +17,9 @@ import androidx.compose.ui.graphics.graphicsLayer
  */
 fun Modifier.blink(
     enabled: Boolean,
-    minAlpha: Float = 0.0f,
+    minAlpha: Float = 0.5f,
     maxAlpha: Float = 1f,
-    durationMillis: Int = 400,
+    durationMillis: Int = 800,
 ): Modifier = composed {
     if (!enabled) {
         this
