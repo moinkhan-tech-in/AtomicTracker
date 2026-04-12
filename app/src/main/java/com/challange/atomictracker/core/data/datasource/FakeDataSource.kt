@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MockStocksDataSource @Inject constructor() : StocksDataSource {
+class FakeDataSource @Inject constructor() : StocksDataSource {
 
     private val _liveFeedConnectionState =
         MutableStateFlow(LiveFeedConnectionState.Connected)

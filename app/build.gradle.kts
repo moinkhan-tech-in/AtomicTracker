@@ -43,6 +43,14 @@ android {
         compose = true
         buildConfig = true
     }
+
+    sourceSets {
+        getByName("test") {
+            java {
+                directories += "src/test/kotlin"
+            }
+        }
+    }
 }
 
 detekt {
