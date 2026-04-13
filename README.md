@@ -4,15 +4,7 @@
 
 A **demo Android stock tracker** built with **Jetpack Compose** and a **layered architecture**. Browse a live-style quote feed, open symbol detail, and toggle streaming updates over a **real WebSocket** with **reconnect and backoff** — not UI-only timers.
 
-## ✨ Features
-
-- **Stock feed** — list of quotes with price and change
-- **Symbol detail** — dedicated screen per ticker (type-safe navigation)
-- **Deep links** — open the feed (`stocks://feed`) or a symbol detail (`stocks://symbol/{symbol}`) via `VIEW` intents
-- **Live feed** — pause/resume the WebSocket-driven ticker; connection state (connecting / connected / disconnected) in the UI on feed and detail
-- **Theme** — light / dark / follow system switch (Material 3)
-
-## 📸 Screenshots
+## 📸 Screenshots & Demo
 
 **Feed / Detail**
 
@@ -46,9 +38,45 @@ Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/res
 https://github.com/user-attachments/assets/29a53e0e-7d85-4d14-8235-7aa7f9564b8c
 
 
+Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/resume, themes, and navigation.
+
+**Watch:** [Open demo video](https://www.youtube.com/watch?v=REPLACE_WITH_VIDEO_ID) — replace the URL with your published link (YouTube, Loom, Google Drive, etc.).
+
+
+## ✨ Features
+
+- **Stock feed** — list of quotes with price and change
+- **Real-time price updates** — quotes refresh through the WebSocket on each tick (~2s cycle)
+- **Automatic sorting** — feed ordered by price (highest first); **row reorder animation** when symbols move in the list after an update
+- **Price flash** — brief color tint on price text when a quote moves up or down (feed and detail)
+- **Symbol detail** — dedicated screen per ticker (type-safe navigation)
+- **Deep links** — open the feed (`stocks://feed`) or a symbol detail (`stocks://symbol/{symbol}`) via `VIEW` intents
+- **Live feed** — pause/resume the WebSocket-driven ticker; connection state (connecting / connected / disconnected) in the UI on feed and detail
+- **Theme** — light / dark / follow system switch (Material 3)
+
+
 ## 🏗️ Architecture
 
-Organized in a **single `app` module** with clear layers (Clean-style separation inside packages):
+Organized in a **single `app` module** with clear layers (Clean-style separation inside packages). Updates flow **up** via `Flow` / `StateFlow`; actions like pausing the feed flow **down** through the same stack.
+
+```
+┌───────────────────────────────────────────────────────────┐
+│  Presentation layer                                       │
+│  Jetpack Compose (feed / detail) · ViewModels · MVVM     │
+│  StateFlow → UI                                           │
+└──────────────────────────┬────────────────────────────────┘
+                           │
+┌──────────────────────────▼────────────────────────────────┐
+│  Domain layer                                             │
+│  Use cases · models (Stock, LiveFeedConnectionState, …)   │
+└──────────────────────────┬────────────────────────────────┘
+                           │
+┌──────────────────────────▼────────────────────────────────┐
+│  Data layer                                               │
+│  DefaultStockRepository · NetworkStocksDataSource         │
+│  PostmanEchoWebSocketClient · DTOs / StockMapper         │
+└───────────────────────────────────────────────────────────┘
+```
 
 - **UI layer** — Jetpack Compose, feature screens (`feed`, `detail`), MVVM with `ViewModel` + `StateFlow`
 - **Domain layer** — use cases and models under `core/domain` (no UI)
