@@ -39,6 +39,13 @@ A **demo Android stock tracker** built with **Jetpack Compose** and a **layered 
   <img src="docs/images/grid_l_ls.png" width="400" alt="Feed — grid light landscape" />
 </p>
 
+## 🎬 Demo video
+
+Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/resume, themes, and navigation.
+
+**Watch:** [Open demo video](https://www.youtube.com/watch?v=REPLACE_WITH_VIDEO_ID) — replace the URL with your published link (YouTube, Loom, Google Drive, etc.).
+
+
 
 ## 🏗️ Architecture
 
