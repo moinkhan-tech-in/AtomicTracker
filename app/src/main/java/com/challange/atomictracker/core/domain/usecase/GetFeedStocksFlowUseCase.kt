@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.map
 class GetFeedStocksFlowUseCase(
     private val stockRepository: StockRepository,
 ) {
-    operator fun invoke(): Flow<ImmutableList<Stock>> =
-        stockRepository.observeStocksList().map { stocks ->
-            stocks
-                .sortedByDescending(Stock::price)
-                .toImmutableList()
+    operator fun invoke(): Flow<Result<ImmutableList<Stock>>> =
+        stockRepository.observeStocksList().map { result ->
+            result.map { stocks ->
+                stocks
+                    .sortedByDescending(Stock::price)
+                    .toImmutableList()
+            }
         }
 }

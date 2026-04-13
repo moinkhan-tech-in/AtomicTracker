@@ -30,9 +30,14 @@ class FeedViewModel @Inject constructor(
             )
 
     val uiState: StateFlow<FeedUiState> = getFeedStocksFlowUseCase()
-        .map { stocks -> FeedUiState.Success(stocks) as FeedUiState }
-        .catch { throwable ->
-            emit(FeedUiState.Error(message = throwable.message.orEmpty()))
+        .map { result ->
+            result.fold(
+                onSuccess = { stocks ->
+                    if (stocks.isEmpty()) FeedUiState.Empty
+                    else FeedUiState.Success(stocks)
+                },
+                onFailure = { t -> FeedUiState.Error(message = t.message.orEmpty()) },
+            )
         }
         .stateIn(
             scope = viewModelScope,

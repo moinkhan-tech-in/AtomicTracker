@@ -19,10 +19,14 @@ class FakeStockRepository : StockRepository {
     var setLiveFeedEnabledCallCount: Int = 0
         private set
 
-    override fun observeStocksList(): Flow<List<Stock>> = _stocks.asStateFlow()
+    override fun observeStocksList(): Flow<Result<List<Stock>>> =
+        _stocks.map { Result.success(it) }
 
-    override fun observeStock(symbol: String): Flow<Stock> =
-        _stocks.map { stocks -> stocks.first { it.symbol == symbol } }
+    override fun observeStock(symbol: String): Flow<Result<Stock>> =
+        _stocks.map { stocks ->
+            stocks.find { it.symbol == symbol }?.let { Result.success(it) }
+                ?: Result.failure(IllegalArgumentException("Unknown symbol: $(symbol)"))
+        }
 
     override val liveFeedConnectionState: Flow<LiveFeedConnectionState> =
         _liveFeedConnectionState.asStateFlow()

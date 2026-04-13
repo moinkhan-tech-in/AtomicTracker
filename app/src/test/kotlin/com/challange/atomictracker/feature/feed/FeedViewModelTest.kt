@@ -33,7 +33,7 @@ class FeedViewModelTest {
     fun uiState_emitsLoadingThenSuccess() = runTest {
         val stocks = listOf(Stock("AAPL", 1.0, 0.1, "Apple Inc."))
         val repo = mockk<StockRepository>(relaxed = true) {
-            every { observeStocksList() } returns flowOf(stocks)
+            every { observeStocksList() } returns flowOf(Result.success(stocks))
             every { liveFeedConnectionState } returns
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
@@ -72,7 +72,7 @@ class FeedViewModelTest {
     fun liveFeedConnectionState_startsConnectingThenFollowsUseCase() = runTest {
         val liveFlow = MutableStateFlow(LiveFeedConnectionState.Disconnected)
         val repo = mockk<StockRepository>(relaxed = true) {
-            every { observeStocksList() } returns flowOf(emptyList())
+            every { observeStocksList() } returns flowOf(Result.success(emptyList()))
             every { liveFeedConnectionState } returns liveFlow.asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
         }
@@ -92,7 +92,7 @@ class FeedViewModelTest {
     @Test
     fun setLiveFeedEnabled_delegatesToUseCase() = runTest {
         val repo = mockk<StockRepository>(relaxed = true) {
-            every { observeStocksList() } returns flowOf(emptyList())
+            every { observeStocksList() } returns flowOf(Result.success(emptyList()))
             every { liveFeedConnectionState } returns
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs

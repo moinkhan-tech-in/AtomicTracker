@@ -42,8 +42,8 @@ class DetailViewModelTest {
         val symbol = "AAPL"
         val stock = Stock(symbol, 189.52, 1.35, "Apple Inc.")
         val repo = mockk<StockRepository>(relaxed = true) {
-            every { observeStock(symbol) } returns flowOf(stock)
-            every { observeStocksList() } returns flowOf(emptyList())
+            every { observeStock(symbol) } returns flowOf(Result.success(stock))
+            every { observeStocksList() } returns flowOf(Result.success(emptyList()))
             every { liveFeedConnectionState } returns
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
@@ -63,7 +63,7 @@ class DetailViewModelTest {
         val symbol = "AAPL"
         val repo = mockk<StockRepository>(relaxed = true) {
             every { observeStock(symbol) } returns flow { throw IOException() }
-            every { observeStocksList() } returns flowOf(emptyList())
+            every { observeStocksList() } returns flowOf(Result.success(emptyList()))
             every { liveFeedConnectionState } returns
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs
@@ -83,8 +83,8 @@ class DetailViewModelTest {
         val symbol = "NVDA"
         val stock = Stock(symbol, 1.0, 0.0, "NVIDIA")
         val repo = mockk<StockRepository>(relaxed = true) {
-            every { observeStock(symbol) } returns flowOf(stock)
-            every { observeStocksList() } returns flowOf(emptyList())
+            every { observeStock(symbol) } returns flowOf(Result.success(stock))
+            every { observeStocksList() } returns flowOf(Result.success(emptyList()))
             every { liveFeedConnectionState } returns
                 MutableStateFlow(LiveFeedConnectionState.Disconnected).asStateFlow()
             every { setLiveFeedEnabled(any()) } just Runs

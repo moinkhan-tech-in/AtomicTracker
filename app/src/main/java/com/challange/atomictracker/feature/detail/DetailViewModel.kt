@@ -12,7 +12,6 @@ import com.challange.atomictracker.core.navigation.DetailRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -20,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    observeStock: GetStockSymbolFlowUseCase,
+    getStockSymbolFlowUseCase: GetStockSymbolFlowUseCase,
     liveFeedFlowUseCase: GetLiveFeedConnectionStateFlowUseCase,
     private val setLiveFeedEnabledUseCase: SetLiveFeedEnabledUseCase,
 ) : ViewModel() {
@@ -35,9 +34,13 @@ class DetailViewModel @Inject constructor(
                 initialValue = LiveFeedConnectionState.Connecting,
             )
 
-    val uiState: StateFlow<DetailUiState> = observeStock(symbol)
-        .map { stock -> DetailUiState.Success(stock) as DetailUiState }
-        .catch { t -> emit(DetailUiState.Error(message = t.message.orEmpty())) }
+    val uiState: StateFlow<DetailUiState> = getStockSymbolFlowUseCase(symbol)
+        .map { result ->
+            result.fold(
+                onSuccess = { DetailUiState.Success(it) },
+                onFailure = { t -> DetailUiState.Error(t.message.orEmpty()) }
+            )
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

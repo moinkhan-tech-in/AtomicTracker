@@ -5,9 +5,9 @@ import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.coroutines.flow.Flow
 
 interface StockRepository {
-    fun observeStocksList(): Flow<List<Stock>>
+    fun observeStocksList(): Flow<Result<List<Stock>>>
 
-    fun observeStock(symbol: String): Flow<Stock>
+    fun observeStock(symbol: String): Flow<Result<Stock>>
 
     fun setLiveFeedEnabled(enabled: Boolean)
 

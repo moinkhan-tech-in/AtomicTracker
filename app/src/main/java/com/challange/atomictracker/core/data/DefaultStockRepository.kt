@@ -15,11 +15,21 @@ class DefaultStockRepository @Inject constructor(
     private val stockMapper: StockMapper,
 ) : StockRepository {
 
-    override fun observeStocksList(): Flow<List<Stock>> =
-        stocksDataSource.observeStocks().map { stockMapper.toDomain(it) }
+    override fun observeStocksList(): Flow<Result<List<Stock>>> =
+        stocksDataSource.observeStocks().map { dtos ->
+            runCatching { stockMapper.toDomain(dtos) }
+        }
 
-    override fun observeStock(symbol: String): Flow<Stock> =
-        stocksDataSource.observeStock(symbol).map { stockMapper.toDomain(it) }
+    override fun observeStock(symbol: String): Flow<Result<Stock>> =
+        stocksDataSource.observeStock(symbol).map { dto ->
+            runCatching {
+                if (dto == null) {
+                    throw IllegalArgumentException("Unknown symbol: $symbol")
+                } else {
+                    stockMapper.toDomain(dto)
+                }
+            }
+        }
 
     override val liveFeedConnectionState: Flow<LiveFeedConnectionState> =
         stocksDataSource.liveFeedConnectionState

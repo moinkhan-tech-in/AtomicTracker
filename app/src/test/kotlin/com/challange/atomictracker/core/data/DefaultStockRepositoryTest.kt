@@ -18,7 +18,7 @@ class DefaultStockRepositoryTest {
         val repo = DefaultStockRepository(FakeDataSource(), mapper)
 
         repo.observeStocksList().test {
-            assertEquals(mapper.toDomain(HARDCODED_STOCKS), awaitItem())
+            assertEquals(Result.success(mapper.toDomain(HARDCODED_STOCKS)), awaitItem())
             awaitComplete()
         }
     }
@@ -29,7 +29,19 @@ class DefaultStockRepositoryTest {
         val dto = HARDCODED_STOCKS.first { it.symbol == "AAPL" }
 
         repo.observeStock("AAPL").test {
-            assertEquals(mapper.toDomain(dto), awaitItem())
+            assertEquals(Result.success(mapper.toDomain(dto)), awaitItem())
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun observeStock_unknownSymbol_emitsFailure() = runTest {
+        val repo = DefaultStockRepository(FakeDataSource(), mapper)
+
+        repo.observeStock("No Symbol").test {
+            val item = awaitItem()
+            assert(item.isFailure)
+            assertEquals((item.exceptionOrNull() as IllegalArgumentException).message, "Unknown symbol: No Symbol")
             awaitComplete()
         }
     }

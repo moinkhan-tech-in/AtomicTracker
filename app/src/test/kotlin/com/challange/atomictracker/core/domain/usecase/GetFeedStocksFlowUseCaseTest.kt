@@ -3,6 +3,7 @@ package com.challange.atomictracker.core.domain.usecase
 import app.cash.turbine.test
 import com.challange.atomictracker.core.domain.fakes.FakeStockRepository
 import com.challange.atomictracker.core.domain.model.Stock
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -19,13 +20,11 @@ class GetFeedStocksFlowUseCaseTest {
         val useCase = GetFeedStocksFlowUseCase(fake)
 
         useCase().test {
-            assertEquals(
-                listOf(
-                    Stock("MSFT", 2.0, -0.2, "Microsoft Corporation"),
-                    Stock("AAPL", 1.0, 0.1, "Apple Inc."),
-                ),
-                awaitItem().toList()
-            )
+            val expected = listOf(
+                Stock("MSFT", 2.0, -0.2, "Microsoft Corporation"),
+                Stock("AAPL", 1.0, 0.1, "Apple Inc."),
+            ).toImmutableList()
+            assertEquals(Result.success(expected), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

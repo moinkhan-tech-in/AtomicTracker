@@ -1,5 +1,6 @@
 package com.challange.atomictracker.core.data.datasource
 
+import com.challange.atomictracker.core.connectivity.NetworkConnectivityObserver
 import com.challange.atomictracker.core.data.ws.EchoWebSocketSession
 import com.challange.atomictracker.core.data.ws.PostmanEchoWebSocketClient
 import com.challange.atomictracker.core.data.ws.StockDto
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.builtins.ListSerializer
@@ -27,30 +30,39 @@ import kotlin.random.Random
 @Singleton
 class NetworkStocksDataSource @Inject constructor(
     private val echoWebSocketClient: PostmanEchoWebSocketClient,
-    private val json: Json
+    private val json: Json,
+    private val connectivityObserver: NetworkConnectivityObserver
 ) : StocksDataSource {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val _stocks = MutableStateFlow(HARDCODED_STOCKS)
+    private val _stocks = MutableStateFlow<List<StockDto>>(emptyList())
     private val _liveFeedConnectionState = MutableStateFlow(LiveFeedConnectionState.Connecting)
     private var feedConnectionJob: Job? = null
 
     init {
-        startLiveConnection()
+        connectivityObserver.isOnline.onEach {
+            if (it) {
+                startLiveConnection()
+            } else {
+                setLiveFeedEnabled(false)
+            }
+        }.launchIn(scope)
     }
 
     override fun observeStocks(): Flow<List<StockDto>> = _stocks
 
-    override fun observeStock(symbol: String): Flow<StockDto> =
+    override fun observeStock(symbol: String): Flow<StockDto?> =
         _stocks
             .map { stocks ->
                 stocks.find { it.symbol == symbol }
-                    ?: StockDto(
-                        symbol = symbol,
-                        price = 0.0,
-                        change = 0.0,
-                        companyName = HARDCODED_STOCKS.find { it.symbol == symbol }?.companyName.orEmpty(),
-                    )
+                    ?: HARDCODED_STOCKS.find { it.symbol == symbol }?.let { known ->
+                        StockDto(
+                            symbol = known.symbol,
+                            price = known.price,
+                            change = 0.0,
+                            companyName = known.companyName,
+                        )
+                    }
             }
             .distinctUntilChanged()
 

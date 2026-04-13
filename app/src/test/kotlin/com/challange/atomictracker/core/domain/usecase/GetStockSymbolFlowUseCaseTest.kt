@@ -18,7 +18,7 @@ class GetStockSymbolFlowUseCaseTest {
         val useCase = GetStockSymbolFlowUseCase(fake)
 
         useCase("AAPL").test {
-            assertEquals(aapl, awaitItem())
+            assertEquals(Result.success(aapl), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -6,16 +6,29 @@ import android.content.ContextWrapper
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.challange.atomictracker.R
 import com.challange.atomictracker.core.navigation.AtomicTrackerNavHost
 
 private fun Context.findActivity(): Activity? {
@@ -28,14 +41,30 @@ private fun Context.findActivity(): Activity? {
 }
 
 @Composable
-fun AtomicTrackerRoot() {
+fun AtomicTrackerRoot(isOnline: Boolean) {
     var themeModeName by rememberSaveable { mutableStateOf(ThemeMode.FollowSystem.name) }
     val themeMode = ThemeMode.valueOf(themeModeName)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val message = stringResource(R.string.snackbar_no_internet)
+    LaunchedEffect(isOnline) {
+        if (isOnline) {
+            snackbarHostState.currentSnackbarData?.dismiss()
+        } else {
+            snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Indefinite)
+        }
+    }
+
     AtomicTrackerTheme(themeMode = themeMode) {
-        AtomicTrackerNavHost(
-            themeMode = themeMode,
-            onThemeModeChange = { themeModeName = it.name },
-        )
+        Box(Modifier.fillMaxSize()) {
+            AtomicTrackerNavHost(
+                themeMode = themeMode,
+                onThemeModeChange = { themeModeName = it.name },
+            )
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(16.dp).align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 

@@ -8,7 +8,7 @@ interface StocksDataSource {
 
     fun observeStocks(): Flow<List<StockDto>>
 
-    fun observeStock(symbol: String): Flow<StockDto>
+    fun observeStock(symbol: String): Flow<StockDto?>
 
     val liveFeedConnectionState: Flow<LiveFeedConnectionState>
 

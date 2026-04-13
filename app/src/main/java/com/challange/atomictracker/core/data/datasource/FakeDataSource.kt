@@ -35,6 +35,6 @@ class FakeDataSource @Inject constructor() : StocksDataSource {
         emit(HARDCODED_STOCKS)
     }
 
-    override fun observeStock(symbol: String): Flow<StockDto> =
-        observeStocks().map { stocks -> stocks.first { it.symbol == symbol } }
+    override fun observeStock(symbol: String): Flow<StockDto?> =
+        observeStocks().map { stocks -> stocks.firstOrNull { it.symbol == symbol } }
 }
