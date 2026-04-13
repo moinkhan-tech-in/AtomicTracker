@@ -6,20 +6,15 @@ A **demo Android stock tracker** built with **Jetpack Compose** and a **layered 
 
 ## 📸 Screenshots & Demo
 
-**Feed / Detail**
+**Feed (List + Grid), Symbol Detail**
 
 <p align="start">
-  <img src="docs/images/feed_l.png" width="240" alt="Feed list — light" />
-  <img src="docs/images/feed_d.png" width="240" alt="Feed list — dark" />
-  <img src="docs/images/detail_l.png" width="240" alt="Detail — light" />
-  <img src="docs/images/detail_d.png" width="240" alt="Detail — dark" />
-</p>
-
-**Feed Grid**
-
-<p align="start">
-  <img src="docs/images/gri_l.png" width="240" alt="Feed list Grid — light" />
-  <img src="docs/images/grid_d.png" width="240" alt="Feed list Grid — dark" />
+  <img src="docs/images/feed_l.png" width="220" alt="Feed list — light" />
+  <img src="docs/images/feed_d.png" width="220" alt="Feed list — dark" />
+  <img src="docs/images/detail_l.png" width="220" alt="Detail — light" />
+  <img src="docs/images/detail_d.png" width="220" alt="Detail — dark" />
+  <img src="docs/images/gri_l.png" width="220" alt="Feed list Grid — light" />
+  <img src="docs/images/grid_d.png" width="220" alt="Feed list Grid — dark" />
 </p>
 
 **Feed Adaptive Layout**
@@ -34,13 +29,7 @@ A **demo Android stock tracker** built with **Jetpack Compose** and a **layered 
 ## 🎬 Demo video
 
 Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/resume, themes, and navigation.
-
 https://github.com/user-attachments/assets/29a53e0e-7d85-4d14-8235-7aa7f9564b8c
-
-
-Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/resume, themes, and navigation.
-
-**Watch:** [Open demo video](https://www.youtube.com/watch?v=REPLACE_WITH_VIDEO_ID) — replace the URL with your published link (YouTube, Loom, Google Drive, etc.).
 
 
 ## ✨ Features
@@ -62,7 +51,7 @@ Organized in a **single `app` module** with clear layers (Clean-style separation
 ```
 ┌───────────────────────────────────────────────────────────┐
 │  Presentation layer                                       │
-│  Jetpack Compose (feed / detail) · ViewModels · MVVM     │
+│  Jetpack Compose (feed / detail) · ViewModels · MVVM      │
 │  StateFlow → UI                                           │
 └──────────────────────────┬────────────────────────────────┘
                            │
@@ -74,7 +63,7 @@ Organized in a **single `app` module** with clear layers (Clean-style separation
 ┌──────────────────────────▼────────────────────────────────┐
 │  Data layer                                               │
 │  DefaultStockRepository · NetworkStocksDataSource         │
-│  PostmanEchoWebSocketClient · DTOs / StockMapper         │
+│  PostmanEchoWebSocketClient · DTOs / StockMapper          │
 └───────────────────────────────────────────────────────────┘
 ```
 
