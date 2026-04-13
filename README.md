@@ -2,49 +2,43 @@
 
 # 📈 AtomicTracker
 
-A **demo Android stock tracker** built with **Jetpack Compose** and a **layered architecture**. Browse a live-style quote feed, open symbol detail, and toggle streaming updates over a **real WebSocket** (Postman echo) with **reconnect and backoff** — not UI-only timers.
-
-> The echo endpoint models a streaming transport: batched JSON is sent, echoed back, and merged into `Flow`-driven UI (`NetworkStocksDataSource` + `PostmanEchoWebSocketClient`).
+A **demo Android stock tracker** built with **Jetpack Compose** and a **layered architecture**. Browse a live-style quote feed, open symbol detail, and toggle streaming updates over a **real WebSocket** with **reconnect and backoff** — not UI-only timers.
 
 ## ✨ Features
 
 - **Stock feed** — list of quotes with price and change
 - **Symbol detail** — dedicated screen per ticker (type-safe navigation)
-- **Live feed toggle** — pause/resume the WebSocket-driven ticker
-- **Connection state** — connecting / connected / disconnected feedback in the UI
-- **Theming** — Material 3 with theme controls in the app bar
+- **Deep links** — open the feed (`stocks://feed`) or a symbol detail (`stocks://symbol/{symbol}`) via `VIEW` intents
+- **Live feed** — pause/resume the WebSocket-driven ticker; connection state (connecting / connected / disconnected) in the UI on feed and detail
+- **Theme** — light / dark / follow system switch (Material 3)
 
 ## 📸 Screenshots
 
-<p align="center">
-  <img src="docs/images/feed_l.png" width="32%" alt="Feed — light" />
-  <img src="docs/images/feed_d.png" width="32%" alt="Feed — dark" />
-</p>
-<p align="center"><em>Feed (list)</em></p>
+**Feed / Detail**
 
-<p align="center">
-  <img src="docs/images/feed_ad_l.png" width="32%" alt="Feed — adaptive light" />
-  <img src="docs/images/feed_l_ls.png" width="32%" alt="Feed — light landscape" />
+<p align="start">
+  <img src="docs/images/feed_l.png" width="240" alt="Feed list — light" />
+  <img src="docs/images/feed_d.png" width="240" alt="Feed list — dark" />
+  <img src="docs/images/detail_l.png" width="240" alt="Detail — light" />
+  <img src="docs/images/detail_d.png" width="240" alt="Detail — dark" />
 </p>
-<p align="center"><em>Feed — adaptive &amp; landscape</em></p>
 
-<p align="center">
-  <img src="docs/images/gri_l.png" width="32%" alt="Grid — light" />
-  <img src="docs/images/grid_d.png" width="32%" alt="Grid — dark" />
-</p>
-<p align="center"><em>Grid</em></p>
+**Feed Grid**
 
-<p align="center">
-  <img src="docs/images/grid_l_ls.png" width="32%" alt="Grid — light landscape" />
-  <img src="docs/images/grid_d_ls.png" width="32%" alt="Grid — dark landscape" />
+<p align="start">
+  <img src="docs/images/gri_l.png" width="240" alt="Feed list Grid — light" />
+  <img src="docs/images/grid_d.png" width="240" alt="Feed list Grid — dark" />
 </p>
-<p align="center"><em>Grid — landscape</em></p>
 
-<p align="center">
-  <img src="docs/images/detail_l.png" width="32%" alt="Detail — light" />
-  <img src="docs/images/detail_d.png" width="32%" alt="Detail — dark" />
+**Feed Adaptive Layout**
+
+<p align="start">
+  <img src="docs/images/feed_ad_l.png" width="400" alt="Feed — list adaptive light" />
 </p>
-<p align="center"><em>Symbol detail</em></p>
+<p align="start">
+  <img src="docs/images/grid_l_ls.png" width="400" alt="Feed — grid light landscape" />
+</p>
+
 
 ## 🏗️ Architecture
 
@@ -62,7 +56,7 @@ Organized in a **single `app` module** with clear layers (Clean-style separation
 - **UI**: Jetpack Compose, Material 3
 - **Architecture**: Layered packages, MVVM, use cases + repository
 - **Async**: Kotlin Coroutines, Flow
-- **DI**: Hilt 
+- **DI**: Hilt
 - **Networking**: OkHttp (WebSocket for live feed; JSON via kotlinx.serialization)
 - **Serialization**: kotlinx.serialization (navigation + JSON for quotes)
 - **Code quality**: Detekt (`config/detekt/detekt.yml`)
@@ -90,36 +84,47 @@ AtomicTracker/
 └── gradle/                           # Version catalog (libs.versions.toml)
 ```
 
-## 🚀 Getting Started
+## 🔗 Deep links
 
-1. Clone the repository:
+The app registers **`stocks`** URIs on `MainActivity` and uses Navigation Compose **`navDeepLink`** with type-safe routes (`FeedRoute`, `DetailRoute`).
 
-   ```bash
-   git clone https://github.com/moinkhan-tech-in/AtomicTracker.git
-   cd AtomicTracker
-   ```
+| URI | Opens |
+|-----|--------|
+| `stocks://feed` | Feed (start destination) |
+| `stocks://symbol/{symbol}` | Symbol detail (e.g. `stocks://symbol/AAPL`) |
 
-2. Open in **Android Studio**, sync Gradle, and run the **`app`** configuration.
+**Try with adb:** `adb shell am start -a android.intent.action.VIEW -d "stocks://symbol/NVDA" -n com.challange.atomictracker/com.challange.atomictracker.app.MainActivity`
 
-3. Or build from the command line:
-
-   ```bash
-   ./gradlew :app:assembleDebug
-   ```
-
-**Note:** The live feed uses the public Postman WebSocket echo service — **network access** is required; no API keys are needed for the demo.
 
 ## 🧪 Testing
 
-The project includes **template** unit and instrumented tests. Libraries such as **Turbine** and **kotlinx-coroutines-test** are on the classpath for extending **Flow** and **ViewModel** tests.
+**Unit tests** — `app/src/test/kotlin/com/challange/atomictracker/`:
+
+```
+test/kotlin/.../atomictracker/
+├── MainDispatcherRule.kt
+├── core/
+│   ├── data/DefaultStockRepositoryTest.kt
+│   └── domain/
+│       ├── fakes/FakeStockRepository.kt
+│       └── usecase/
+│           ├── GetFeedStocksFlowUseCaseTest.kt
+│           ├── GetLiveFeedConnectionStateFlowUseCaseTest.kt
+│           ├── GetStockSymbolFlowUseCaseTest.kt
+│           └── SetLiveFeedEnabledUseCaseTest.kt
+└── feature/
+    ├── feed/FeedViewModelTest.kt
+    └── detail/DetailViewModelTest.kt
+```
+
+**Instrumented** — `app/src/androidTest/java/.../atomictracker/app/ExampleInstrumentedTest.kt`
+
+**Coverage:** JaCoCo / Kover are **not** wired in Gradle; there is no HTML coverage report or CI coverage badge. Run unit tests locally with `./gradlew testDebugUnitTest`.
 
 ### Running checks
 
 ```bash
-# Unit tests (debug)
 ./gradlew testDebugUnitTest
-
-# Static analysis
 ./gradlew detekt
 ```
 
