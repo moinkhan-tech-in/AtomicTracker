@@ -43,8 +43,7 @@ A **demo Android stock tracker** built with **Jetpack Compose** and a **layered 
 
 Short walkthrough: live feed, WebSocket-driven updates, symbol detail, pause/resume, themes, and navigation.
 
-**Watch:** [Open demo video](https://www.youtube.com/watch?v=REPLACE_WITH_VIDEO_ID) — replace the URL with your published link (YouTube, Loom, Google Drive, etc.).
-
+https://github.com/user-attachments/assets/29a53e0e-7d85-4d14-8235-7aa7f9564b8c
 
 
 ## 🏗️ Architecture
@@ -58,6 +57,7 @@ Organized in a **single `app` module** with clear layers (Clean-style separation
 - **Design system** — shared theme, scaffold, and components under `core/designsystem`
 - **DI** — **Hilt** modules in `di/` (`NetworkModule`, `RepositoryModule`, `UseCaseModule`, `DataSourceModule`)
 
+
 ## 🧩 Tech Stack
 
 - **UI**: Jetpack Compose, Material 3
@@ -68,6 +68,7 @@ Organized in a **single `app` module** with clear layers (Clean-style separation
 - **Serialization**: kotlinx.serialization (navigation + JSON for quotes)
 - **Code quality**: Detekt (`config/detekt/detekt.yml`)
 - **Testing**: JUnit, Turbine, kotlinx-coroutines-test (see Testing)
+
 
 
 ## 📁 Project Structure
@@ -91,6 +92,7 @@ AtomicTracker/
 └── gradle/                           # Version catalog (libs.versions.toml)
 ```
 
+
 ## 🔗 Deep links
 
 The app registers **`stocks`** URIs on `MainActivity` and uses Navigation Compose **`navDeepLink`** with type-safe routes (`FeedRoute`, `DetailRoute`).
@@ -101,6 +103,7 @@ The app registers **`stocks`** URIs on `MainActivity` and uses Navigation Compos
 | `stocks://symbol/{symbol}` | Symbol detail (e.g. `stocks://symbol/AAPL`) |
 
 **Try with adb:** `adb shell am start -a android.intent.action.VIEW -d "stocks://symbol/NVDA" -n com.challange.atomictracker/com.challange.atomictracker.app.MainActivity`
+
 
 
 ## 🧪 Testing
@@ -124,9 +127,6 @@ test/kotlin/.../atomictracker/
     └── detail/DetailViewModelTest.kt
 ```
 
-**Instrumented** — `app/src/androidTest/java/.../atomictracker/app/ExampleInstrumentedTest.kt`
-
-**Coverage:** JaCoCo / Kover are **not** wired in Gradle; there is no HTML coverage report or CI coverage badge. Run unit tests locally with `./gradlew testDebugUnitTest`.
 
 ### Running checks
 
@@ -135,6 +135,7 @@ test/kotlin/.../atomictracker/
 ./gradlew detekt
 ```
 
+
 ## 🤖 CI/CD
 
 [GitHub Actions](https://github.com/moinkhan-tech-in/AtomicTracker/actions/workflows/ci.yml) runs on **push** and **pull requests** to `main`:
@@ -142,9 +143,11 @@ test/kotlin/.../atomictracker/
 - Detekt static analysis
 - `testDebugUnitTest`
 
+
 ## 🚧 Possible next steps
 
 - Multi-module split (`:core:domain`, `:feature:feed`, …) if the app grows
+
 
 ## 👨‍💻 Author
 
