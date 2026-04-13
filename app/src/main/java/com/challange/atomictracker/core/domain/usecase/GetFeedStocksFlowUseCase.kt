@@ -5,6 +5,7 @@ import com.challange.atomictracker.core.domain.model.Stock
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 class GetFeedStocksFlowUseCase(
@@ -17,5 +18,5 @@ class GetFeedStocksFlowUseCase(
                     .sortedByDescending(Stock::price)
                     .toImmutableList()
             }
-        }
+        }.catch { emit(Result.failure(it)) }
 }
