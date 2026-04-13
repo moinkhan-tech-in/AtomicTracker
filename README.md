@@ -2,7 +2,7 @@
 
 # 📈 AtomicTracker
 
-A **demo Android stock tracker** built with **Jetpack Compose** and a **layered architecture**. Browse a live-style quote feed, open symbol detail, and toggle streaming updates over a **real WebSocket** with **reconnect and backoff** — not UI-only timers.
+A **demo Android stock tracker** built with **Jetpack Compose** with **Adaptive layout** and a **layered architecture**. Browse a live-style quote feed, open symbol detail, and toggle streaming updates over a **real WebSocket** with **reconnect and backoff**.
 
 ## 📸 Screenshots & Demo
 
