@@ -1,6 +1,7 @@
 package com.challange.atomictracker.core.domain.usecase
 
 import com.challange.atomictracker.core.domain.fakes.FakeStockRepository
+import com.challange.atomictracker.domain.usecase.SetLiveFeedEnabledUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

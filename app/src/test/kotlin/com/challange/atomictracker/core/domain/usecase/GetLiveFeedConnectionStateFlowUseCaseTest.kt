@@ -2,7 +2,8 @@ package com.challange.atomictracker.core.domain.usecase
 
 import app.cash.turbine.test
 import com.challange.atomictracker.core.domain.fakes.FakeStockRepository
-import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.domain.usecase.GetLiveFeedConnectionStateFlowUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test

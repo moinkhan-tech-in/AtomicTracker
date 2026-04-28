@@ -1,10 +1,10 @@
 package com.challange.atomictracker.core.data
 
 import app.cash.turbine.test
-import com.challange.atomictracker.core.data.datasource.FakeDataSource
-import com.challange.atomictracker.core.data.mapper.StockMapper
-import com.challange.atomictracker.core.domain.model.HARDCODED_STOCKS
-import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.data.mapper.StockMapper
+import com.challange.atomictracker.domain.model.HARDCODED_STOCKS
+import com.challange.atomictracker.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.data.DefaultStockRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test

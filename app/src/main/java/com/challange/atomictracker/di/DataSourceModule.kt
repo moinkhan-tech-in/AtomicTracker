@@ -1,7 +1,7 @@
 package com.challange.atomictracker.di
 
-import com.challange.atomictracker.core.data.datasource.NetworkStocksDataSource
-import com.challange.atomictracker.core.data.datasource.StocksDataSource
+import com.challange.atomictracker.data.datasource.NetworkStocksDataSource
+import com.challange.atomictracker.data.datasource.StocksDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

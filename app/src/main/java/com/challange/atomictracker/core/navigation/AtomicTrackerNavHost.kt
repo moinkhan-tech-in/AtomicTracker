@@ -10,8 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.challange.atomictracker.core.designsystem.theme.ThemeMode
-import com.challange.atomictracker.feature.detail.DetailScreen
-import com.challange.atomictracker.feature.feed.FeedScreen
+import com.challange.atomictracker.presentation.detail.DetailScreen
+import com.challange.atomictracker.presentation.feed.FeedScreen
 
 @Composable
 fun AtomicTrackerNavHost(

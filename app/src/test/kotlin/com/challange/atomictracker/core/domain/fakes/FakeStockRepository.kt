@@ -1,8 +1,8 @@
 package com.challange.atomictracker.core.domain.fakes
 
-import com.challange.atomictracker.core.data.StockRepository
-import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
-import com.challange.atomictracker.core.domain.model.Stock
+import com.challange.atomictracker.domain.repository.StockRepository
+import com.challange.atomictracker.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.domain.model.Stock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

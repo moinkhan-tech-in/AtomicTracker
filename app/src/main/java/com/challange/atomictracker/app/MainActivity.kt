@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.challange.atomictracker.core.connectivity.NetworkConnectivityObserver
+import com.challange.atomictracker.core.utils.NetworkConnectivityObserver
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerRoot
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

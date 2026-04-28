@@ -5,8 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.challange.atomictracker.common.blink
-import com.challange.atomictracker.core.domain.model.LiveFeedConnectionState
+import com.challange.atomictracker.core.utils.blink
+import com.challange.atomictracker.domain.model.LiveFeedConnectionState
 
 @Composable
 fun FeedConnectionIndicator(

@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.designsystem.theme.AtomicTrackerTheme
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
-import com.challange.atomictracker.core.domain.model.PriceDirection
+import com.challange.atomictracker.domain.model.PriceDirection
 import java.text.NumberFormat
 import java.util.Locale
 

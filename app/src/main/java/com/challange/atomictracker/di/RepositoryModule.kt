@@ -1,7 +1,7 @@
 package com.challange.atomictracker.di
 
-import com.challange.atomictracker.core.data.DefaultStockRepository
-import com.challange.atomictracker.core.data.StockRepository
+import com.challange.atomictracker.data.DefaultStockRepository
+import com.challange.atomictracker.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

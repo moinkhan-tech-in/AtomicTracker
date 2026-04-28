@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.challange.atomictracker.core.designsystem.theme.LocalAtomicTrackerColorScheme
-import com.challange.atomictracker.core.domain.model.PriceDirection
+import com.challange.atomictracker.domain.model.PriceDirection
 
 @Composable
 fun PriceChangeDirectionIcon(direction: PriceDirection) {
